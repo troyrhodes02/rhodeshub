@@ -1,66 +1,31 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Typography, Box } from "@mui/material";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    // <Box sx={{ p: 4 }}>
+    //   <Typography variant="h1">Hello World (Sora)</Typography>
+    //   <Typography variant="h2">Subheading (Sora)</Typography>
+    //   <Typography variant="h3">Smaller Heading (Sora)</Typography>
+
+    //   <Typography variant="body1" sx={{ mt: 2 }}>
+    //     This is body text using Inter font. It's the default font for all text content.
+    //   </Typography>
+
+    //   <h1>Regular H1 (Sora)</h1>
+    //   <h2>Regular H2 (Sora)</h2>
+    //   <p>Regular paragraph text uses Inter font.</p>
+
+    //   <Box sx={{ mt: 4 }}>
+    //     <Box sx={{ fontFamily: 'var(--font-sora), sans-serif', fontSize: '2rem' }}>
+    //       Custom text with Sora font
+    //     </Box>
+    //     <Box sx={{ fontFamily: 'var(--font-inter), sans-serif', fontSize: '1rem', mt: 1 }}>
+    //       Custom text with Inter font
+    //     </Box>
+    //   </Box>
+    // </Box>
+    <div>
+      <h1>Home</h1>
     </div>
   );
 }

@@ -12,11 +12,15 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",
-    "format": "prettier --check .",
-    "format:fix": "prettier --write ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "prettier": "^3.0.0",
     "turbo": "^2.0.0"
+  },
+  "dependencies": {
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6"
   }
 }
