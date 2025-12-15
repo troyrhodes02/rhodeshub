@@ -57,10 +57,7 @@ export function ThemeContextProvider({ children }: { children: ReactNode }) {
 
   const resolvedMode = mode === "system" ? systemPreference : mode;
 
-  const value = useMemo(
-    () => ({ mode, resolvedMode, setMode, toggleMode }),
-    [mode, resolvedMode]
-  );
+  const value = useMemo(() => ({ mode, resolvedMode, setMode, toggleMode }), [mode, resolvedMode]);
 
   // Prevent flash by not rendering until mounted
   if (!mounted) {
@@ -77,4 +74,3 @@ export function useThemeMode() {
   }
   return context;
 }
-
