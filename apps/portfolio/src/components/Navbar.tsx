@@ -47,7 +47,7 @@ export default function Navbar() {
         left: 0,
         right: 0,
         zIndex: 50,
-        backgroundColor: "transparent",
+        backgroundColor: "background.default",
         boxShadow: "none",
         borderBottom: "1px solid",
         borderColor: "divider",
@@ -79,7 +79,9 @@ export default function Navbar() {
           }}
         >
           <Image
-            src={resolvedMode === "dark" ? "/rhodes-hub-logo-white.png" : "/rhodes-hub-logo-dark.png"}
+            src={
+              resolvedMode === "dark" ? "/rhodes-hub-logo-white.png" : "/rhodes-hub-logo-dark.png"
+            }
             alt="Logo"
             width={40}
             height={40}
