@@ -1,37 +1,24 @@
 "use client";
 
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { ThemeContextProvider, useThemeMode, getTheme } from "@/theme";
 
-// Material UI theme with custom fonts
-const theme = createTheme({
-  typography: {
-    fontFamily: "var(--font-inter), sans-serif",
-    h1: {
-      fontFamily: "var(--font-sora), sans-serif",
-    },
-    h2: {
-      fontFamily: "var(--font-sora), sans-serif",
-    },
-    h3: {
-      fontFamily: "var(--font-sora), sans-serif",
-    },
-    h4: {
-      fontFamily: "var(--font-sora), sans-serif",
-    },
-    h5: {
-      fontFamily: "var(--font-sora), sans-serif",
-    },
-    h6: {
-      fontFamily: "var(--font-sora), sans-serif",
-    },
-  },
-});
+function ThemeProviderWrapper({ children }: { children: React.ReactNode }) {
+  const { resolvedMode } = useThemeMode();
+  const theme = getTheme(resolvedMode);
 
-export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {children}
     </ThemeProvider>
+  );
+}
+
+export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeContextProvider>
+      <ThemeProviderWrapper>{children}</ThemeProviderWrapper>
+    </ThemeContextProvider>
   );
 }
