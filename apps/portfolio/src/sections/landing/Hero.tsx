@@ -18,7 +18,6 @@ import { ArrowRight, Download, Code2, Layers, Zap, Database } from "lucide-react
 
 const techStack = ["TypeScript", "React", "Next.js", "Node.js", "Tailwind CSS", "Prisma"];
 
-// Motion wrappers for MUI components
 const MotionBox = motion(Box);
 const MotionTypography = motion(Typography);
 
@@ -34,7 +33,6 @@ export default function Hero() {
         px: { xs: 2, sm: 3, lg: 0 },
       }}
     >
-      {/* Background gradient */}
       <Box
         sx={{
           position: "absolute",
@@ -46,7 +44,6 @@ export default function Hero() {
         }}
       />
 
-      {/* Grid pattern */}
       <Box
         sx={{
           position: "absolute",
@@ -73,7 +70,6 @@ export default function Hero() {
             py: { xs: 8, sm: 10 },
           }}
         >
-          {/* Left side */}
           <Grid size={{ xs: 12, md: 6 }}>
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
@@ -81,7 +77,6 @@ export default function Hero() {
               transition={{ duration: 0.6 }}
               sx={{ textAlign: { xs: "center", md: "left" } }}
             >
-              {/* Eyebrow */}
               <MotionBox
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -93,7 +88,6 @@ export default function Hero() {
                   variant="outlined"
                   sx={{
                     borderColor: "primary.main",
-                    // mimic your subtle pill feel
                     backgroundColor: (theme) => `${theme.palette.primary.main}0D`,
                     color: "primary.main",
                     fontWeight: 600,
@@ -102,7 +96,6 @@ export default function Hero() {
                     pl: 3.25,
                   }}
                 />
-                {/* tiny dot */}
                 <Box
                   sx={{
                     position: "absolute",
@@ -118,7 +111,6 @@ export default function Hero() {
                 />
               </MotionBox>
 
-              {/* Headline */}
               <MotionTypography
                 variant="h2"
                 initial={{ opacity: 0, y: 20 }}
@@ -150,7 +142,6 @@ export default function Hero() {
                 , automation tools, and clean frontend interfaces.
               </MotionTypography>
 
-              {/* Subheadline */}
               <MotionTypography
                 variant="body1"
                 initial={{ opacity: 0, y: 20 }}
@@ -168,7 +159,6 @@ export default function Hero() {
                 applications with exceptional developer and user experience.
               </MotionTypography>
 
-              {/* Buttons */}
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -212,7 +202,6 @@ export default function Hero() {
                 </Stack>
               </MotionBox>
 
-              {/* Tech stack */}
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -256,7 +245,6 @@ export default function Hero() {
             </MotionBox>
           </Grid>
 
-          {/* Right side */}
           <Grid size={{ xs: 12, md: 6 }}>
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
@@ -265,7 +253,6 @@ export default function Hero() {
               sx={{ width: "100%", maxWidth: 520, mx: { xs: "auto", md: 0 } }}
             >
               <Box sx={{ position: "relative" }}>
-                {/* Glow */}
                 <Box
                   sx={(theme) => ({
                     position: "absolute",
@@ -277,7 +264,6 @@ export default function Hero() {
                 />
 
                 <Stack spacing={2} sx={{ position: "relative" }}>
-                  {/* Main card */}
                   <Card
                     elevation={0}
                     sx={{
@@ -329,7 +315,6 @@ export default function Hero() {
                     </CardContent>
                   </Card>
 
-                  {/* Two small cards */}
                   <Grid container spacing={2}>
                     <Grid size={6}>
                       <Card
@@ -398,7 +383,6 @@ export default function Hero() {
                     </Grid>
                   </Grid>
 
-                  {/* Bottom card */}
                   <Card
                     elevation={0}
                     sx={{

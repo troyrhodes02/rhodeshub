@@ -16,7 +16,8 @@ import {
   ListItem,
   Divider,
 } from "@mui/material";
-import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
+import { Github, Linkedin, Mail, Menu, X, Sun, Moon } from "lucide-react";
+import { useThemeMode } from "@/theme";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -31,6 +32,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { resolvedMode, toggleMode } = useThemeMode();
 
   useEffect(() => {
     setMounted(true);
@@ -63,7 +65,6 @@ export default function Navbar() {
           position: "relative",
         }}
       >
-        {/* Logo - Left Section */}
         <Box
           component={Link}
           href="/"
@@ -78,7 +79,7 @@ export default function Navbar() {
           }}
         >
           <Image
-            src="/rhodes-hub-logo.png"
+            src={resolvedMode === "dark" ? "/rhodes-hub-logo-white.png" : "/rhodes-hub-logo-dark.png"}
             alt="Logo"
             width={40}
             height={40}
@@ -98,7 +99,6 @@ export default function Navbar() {
           </Typography>
         </Box>
 
-        {/* Desktop Navigation - Center Section */}
         <Box
           sx={{
             display: { xs: "none", lg: "flex" },
@@ -158,7 +158,6 @@ export default function Navbar() {
           })}
         </Box>
 
-        {/* Right Section - Social Icons (Desktop) / Menu Button (Mobile) */}
         <Box
           sx={{
             display: "flex",
@@ -172,7 +171,6 @@ export default function Navbar() {
             minWidth: "fit-content",
           }}
         >
-          {/* Social Icons - Desktop */}
           <Box
             sx={{
               display: { xs: "none", lg: "flex" },
@@ -235,9 +233,24 @@ export default function Navbar() {
             >
               <Mail size={20} />
             </IconButton>
+            <IconButton
+              onClick={toggleMode}
+              aria-label="Toggle dark mode"
+              sx={{
+                color: "text.secondary",
+                borderRadius: "8px",
+                padding: "8px",
+                transition: "all 0.2s",
+                "&:hover": {
+                  backgroundColor: "action.hover",
+                  color: "text.primary",
+                },
+              }}
+            >
+              {resolvedMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            </IconButton>
           </Box>
 
-          {/* Mobile Menu Button */}
           <IconButton
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             sx={{
@@ -256,7 +269,6 @@ export default function Navbar() {
         </Box>
       </Toolbar>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -276,7 +288,6 @@ export default function Navbar() {
                 py: 3,
               })}
             >
-              {/* Navigation Links */}
               <List sx={{ py: 0, mb: 2, px: 0 }}>
                 {navLinks.map((link) => {
                   const isActive = mounted && pathname === link.href;
@@ -317,10 +328,8 @@ export default function Navbar() {
                 })}
               </List>
 
-              {/* Divider */}
               <Divider sx={{ my: 2, borderColor: "divider" }} />
 
-              {/* Social Icons */}
               <Box
                 sx={{
                   display: "flex",
@@ -383,6 +392,22 @@ export default function Navbar() {
                   }}
                 >
                   <Mail size={20} />
+                </IconButton>
+                <IconButton
+                  onClick={toggleMode}
+                  aria-label="Toggle dark mode"
+                  sx={{
+                    color: "text.secondary",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      backgroundColor: "action.hover",
+                      color: "text.primary",
+                    },
+                  }}
+                >
+                  {resolvedMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                 </IconButton>
               </Box>
             </Box>
