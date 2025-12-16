@@ -1,7 +1,5 @@
-export default function Experience() {
-  return (
-    <div>
-      <h1>Experience</h1>
-    </div>
-  );
+import ExperienceSection from "@/components/sections/experience/Experience";
+
+export default function ExperiencePage() {
+  return <ExperienceSection />;
 }
