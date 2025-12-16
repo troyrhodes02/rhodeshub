@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -71,22 +70,31 @@ export default function Navbar() {
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 1,
+            gap: 1.5,
             textDecoration: "none",
             color: "inherit",
             flex: { xs: 0, lg: 1 },
             zIndex: 1,
           }}
         >
-          <Image
-            src={
-              resolvedMode === "dark" ? "/rhodes-hub-logo-white.png" : "/rhodes-hub-logo-dark.png"
-            }
-            alt="Logo"
-            width={40}
-            height={40}
-            style={{ borderRadius: "8px" }}
-          />
+          {/* W Logo */}
+          <Box
+            sx={{
+              width: 40,
+              height: 40,
+              borderRadius: 2,
+              bgcolor: "primary.main",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "primary.contrastText",
+              fontWeight: 700,
+              fontSize: "1.25rem",
+              flexShrink: 0,
+            }}
+          >
+            W
+          </Box>
           <Typography
             sx={{
               fontSize: "20px",
@@ -380,7 +388,7 @@ export default function Navbar() {
                 </IconButton>
                 <IconButton
                   component="a"
-                  href="mailto:contact@williamrhodes.dev"
+                  href="mailto:wtrhodes.dev@gmail.com"
                   aria-label="Email"
                   sx={{
                     color: "text.secondary",
