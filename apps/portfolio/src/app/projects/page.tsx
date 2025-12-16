@@ -1,7 +1,5 @@
-export default function Projects() {
-  return (
-    <div>
-      <h1>Projects</h1>
-    </div>
-  );
+import Projects from "@/components/sections/projects/Projects";
+
+export default function ProjectsPage() {
+  return <Projects />;
 }
