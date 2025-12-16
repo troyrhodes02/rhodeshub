@@ -1,8 +1,8 @@
-import Hero from "@/sections/landing/Hero";
-import FeaturedProjects from "@/sections/landing/FeaturedProjects";
-import SkillsAndTechnologies from "@/sections/landing/SkillsAndTechnologies";
-import EngineeringJourney from "@/sections/landing/EngineeringJourney";
-import Connect from "@/sections/landing/Connect";
+import Hero from "@/components/sections/landing/Hero";
+import FeaturedProjects from "@/components/sections/landing/FeaturedProjects";
+import SkillsAndTechnologies from "@/components/sections/landing/SkillsAndTechnologies";
+import EngineeringJourney from "@/components/sections/landing/EngineeringJourney";
+import Connect from "@/components/sections/landing/Connect";
 import { Box } from "@mui/material";
 
 export default function Home() {
