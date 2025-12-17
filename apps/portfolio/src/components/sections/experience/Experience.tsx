@@ -70,16 +70,7 @@ const experiences: Experience[] = [
       "Developed automated workflow systems with dynamic form routing logic and SharePoint-based document management, implementing real-time tracking and version control for enterprise operations serving 10,000+ users",
       "Managed enterprise-level user provisioning and access control across multiple platforms (Pathify, DocuSign, DynamicForms) while ensuring FERPA compliance and collaborating with department heads to integrate custom UI components",
     ],
-    technologies: [
-      "DocuSign",
-      "SharePoint",
-      "Banner ERP",
-      "Laserfiche",
-      "Pathify",
-      "DynamicForms",
-      "JavaScript",
-      "Python",
-    ],
+    technologies: ["DocuSign", "SharePoint", "Banner ERP", "Laserfiche", "Pathify", "DynamicForms"],
   },
 ];
 
