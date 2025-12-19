@@ -20,11 +20,11 @@ import { useThemeMode } from "@/theme";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
-  { href: "/experience", label: "Experience" },
-  { href: "/about", label: "About" },
-  { href: "/ai-demo", label: "AI Demo" },
-  { href: "/contact", label: "Contact" },
+  { href: "/pages/projects", label: "Projects" },
+  { href: "/pages/experience", label: "Experience" },
+  { href: "/pages/about", label: "About" },
+  { href: "/pages/ai-demo", label: "AI Demo" },
+  { href: "/pages/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
