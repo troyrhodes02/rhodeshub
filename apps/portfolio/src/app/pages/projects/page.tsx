@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Box, Container, Stack, Typography, Button, Grid, Divider } from "@mui/material";
 import { Filter } from "lucide-react";
-import ProjectCard, { Project } from "./ProjectCard";
+import ProjectCard, { Project } from "@/components/sections/projects/ProjectCard";
 
 const allProjects: Project[] = [
   {
@@ -126,7 +126,7 @@ type Category = (typeof categories)[number];
 
 const MotionBox = motion.create(Box);
 
-export default function Projects() {
+export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
 
   const filteredProjects =

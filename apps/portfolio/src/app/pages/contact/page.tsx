@@ -18,7 +18,7 @@ import { SendHorizontal, Mail, Github, Linkedin } from "lucide-react";
 
 const MotionBox = motion.create(Box);
 
-export default function ContactSection() {
+export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",

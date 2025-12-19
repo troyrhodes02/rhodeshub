@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Box, Container, Stack, Typography, Divider } from "@mui/material";
-import ExperienceCard, { Experience } from "./ExperienceCard";
+import ExperienceCard, { Experience } from "@/components/sections/experience/ExperienceCard";
 
 const experiences: Experience[] = [
   {
@@ -76,7 +76,7 @@ const experiences: Experience[] = [
 
 const MotionBox = motion.create(Box);
 
-export default function ExperienceSection() {
+export default function ExperiencePage() {
   return (
     <Box
       component="section"
