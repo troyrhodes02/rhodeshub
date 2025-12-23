@@ -13,24 +13,18 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const STORAGE_KEY = "theme-mode";
-
 function getSystemPreference(): "light" | "dark" {
   if (typeof window === "undefined") return "light";
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 export function ThemeContextProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>("system");
+  const [mode, setModeState] = useState<ThemeMode>("light");
   const [systemPreference, setSystemPreference] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
 
-  // Initialize from localStorage and system preference
+  // Initialize system preference
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-    if (stored && ["light", "dark", "system"].includes(stored)) {
-      setModeState(stored);
-    }
     setSystemPreference(getSystemPreference());
     setMounted(true);
   }, []);
@@ -47,7 +41,6 @@ export function ThemeContextProvider({ children }: { children: ReactNode }) {
 
   const setMode = (newMode: ThemeMode) => {
     setModeState(newMode);
-    localStorage.setItem(STORAGE_KEY, newMode);
   };
 
   const toggleMode = () => {
