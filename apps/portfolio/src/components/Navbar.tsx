@@ -70,7 +70,6 @@ export default function Navbar() {
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 1.5,
             textDecoration: "none",
             color: "inherit",
             flex: { xs: 0, lg: 1 },
@@ -95,18 +94,6 @@ export default function Navbar() {
           >
             W
           </Box>
-          <Typography
-            sx={{
-              fontSize: "20px",
-              fontWeight: "bold",
-              color: "text.primary",
-              display: { xs: "none", sm: "block" },
-              whiteSpace: "nowrap",
-            }}
-            variant="h6"
-          >
-            William Rhodes
-          </Typography>
         </Box>
 
         <Box

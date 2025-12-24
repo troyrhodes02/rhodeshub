@@ -77,11 +77,45 @@ export default function Hero() {
               transition={{ duration: 0.6 }}
               sx={{ textAlign: { xs: "center", md: "left" } }}
             >
+              {/* Name as focal point */}
+              <MotionTypography
+                variant="h1"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                sx={{
+                  fontWeight: 800,
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1,
+                  whiteSpace: "nowrap",
+                  fontSize: {
+                    xs: "2.75rem",
+                    sm: "4rem",
+                    md: "4.5rem",
+                    lg: "5.5rem",
+                  },
+                  mb: 2,
+                }}
+              >
+                William{" "}
+                <Box
+                  component="span"
+                  sx={(theme) => ({
+                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  })}
+                >
+                  Rhodes
+                </Box>
+              </MotionTypography>
+
+              {/* Role chip */}
               <MotionBox
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                sx={{ display: "inline-flex", mb: 2, position: "relative" }}
+                transition={{ delay: 0.2 }}
+                sx={{ display: "inline-flex", mb: 3, position: "relative" }}
               >
                 <Chip
                   label="Full-Stack Software Engineer"
@@ -111,21 +145,23 @@ export default function Hero() {
                 />
               </MotionBox>
 
+              {/* Tagline */}
               <MotionTypography
                 variant="h2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.3 }}
                 sx={{
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.08,
+                  fontWeight: 700,
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.2,
                   fontSize: {
-                    xs: "2rem",
-                    sm: "2.6rem",
-                    md: "3.2rem",
-                    lg: "3.6rem",
+                    xs: "1.5rem",
+                    sm: "1.75rem",
+                    md: "2rem",
+                    lg: "2.25rem",
                   },
+                  color: "text.primary",
                 }}
               >
                 Building modern{" "}
@@ -146,7 +182,7 @@ export default function Hero() {
                 variant="body1"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.4 }}
                 sx={{
                   mt: { xs: 2, sm: 3 },
                   mx: { xs: "auto", md: 0 },
@@ -162,7 +198,7 @@ export default function Hero() {
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.5 }}
                 sx={{ mt: 4 }}
               >
                 <Stack
@@ -205,7 +241,7 @@ export default function Hero() {
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.6 }}
                 sx={{ mt: 4 }}
               >
                 <Typography
