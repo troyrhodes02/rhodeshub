@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { ArrowRight, Download, Code2, Layers, Zap, Database } from "lucide-react";
 
-const techStack = ["TypeScript", "React", "Next.js", "Node.js", "Tailwind CSS", "Prisma"];
+const techStack = ["TypeScript", "React", "Next.js", "Node.js", "Material UI", "Prisma"];
 
 const MotionBox = motion(Box);
 const MotionTypography = motion(Typography);
@@ -172,7 +172,7 @@ export default function Hero() {
                 >
                   <Button
                     component={Link}
-                    href="/projects"
+                    href="/pages/projects"
                     variant="contained"
                     size="large"
                     endIcon={<ArrowRight size={18} />}
@@ -182,9 +182,9 @@ export default function Hero() {
                   </Button>
 
                   <Button
-                    component={Link}
-                    href="#"
-                    download
+                    component="a"
+                    href="/resume/William_Rhodes_Resume.pdf"
+                    download="William_Rhodes_Resume.pdf"
                     variant="outlined"
                     size="large"
                     startIcon={<Download size={18} />}

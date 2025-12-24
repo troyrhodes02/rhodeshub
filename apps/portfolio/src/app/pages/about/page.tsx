@@ -302,7 +302,7 @@ export default function About() {
                     </Typography>
                     <Button
                       component={Link}
-                      href="/contact"
+                      href="/pages/contact"
                       variant="contained"
                       endIcon={<ArrowRight size={18} />}
                       sx={{

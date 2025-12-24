@@ -1,43 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Box,
-  Container,
-  Stack,
-  Typography,
-  TextField,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Divider,
-} from "@mui/material";
-import { SendHorizontal, Mail, Github, Linkedin } from "lucide-react";
+import { Box, Container, Stack, Typography, Card, CardContent, Grid, Divider } from "@mui/material";
+import { Mail, Github, Linkedin } from "lucide-react";
 
 const MotionBox = motion.create(Box);
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement form submission
-    console.log("Form submitted:", formData);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   return (
     <Box
       component="section"
@@ -80,14 +49,15 @@ export default function ContactPage() {
 
         <Divider sx={{ mb: { xs: 4, sm: 5, md: 6 } }} />
 
-        {/* Two Column Layout */}
-        <Grid container spacing={{ xs: 3, md: 4 }}>
-          {/* Left Column - Send a Message Form */}
+        {/* Main Content - Two Cards Side by Side */}
+        <Grid container spacing={{ xs: 3, sm: 4, md: 4 }}>
+          {/* Direct Contact Card */}
           <Grid size={{ xs: 12, md: 6 }}>
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
+              sx={{ height: "100%" }}
             >
               <Card
                 elevation={0}
@@ -97,103 +67,98 @@ export default function ContactPage() {
                   borderColor: "divider",
                   bgcolor: "background.paper",
                   height: "100%",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    borderColor: "primary.light",
+                    boxShadow: (theme) => `0 8px 32px ${theme.palette.primary.main}14`,
+                    transform: "translateY(-4px)",
+                  },
                 }}
               >
-                <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-                  <Stack spacing={3}>
+                <CardContent sx={{ p: { xs: 3, sm: 4, md: 5 }, height: "100%" }}>
+                  <Stack spacing={3} sx={{ height: "100%" }}>
                     <Box>
                       <Typography
-                        variant="h5"
+                        variant="h4"
                         sx={{
                           fontWeight: 700,
-                          fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                          mb: 1,
+                          fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
+                          mb: 1.5,
                           color: "text.primary",
                         }}
                       >
-                        Send a Message
+                        Direct Contact
                       </Typography>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         sx={{
                           color: "text.secondary",
-                          fontSize: { xs: "0.9rem", sm: "0.95rem" },
+                          fontSize: { xs: "0.95rem", sm: "1rem", md: "1.05rem" },
+                          lineHeight: 1.6,
                         }}
                       >
-                        Fill out the form below and I'll get back to you as soon as possible.
+                        Prefer email? Reach out directly and I'll respond as soon as I can.
                       </Typography>
                     </Box>
 
-                    <Box component="form" onSubmit={handleSubmit}>
-                      <Stack spacing={2.5}>
-                        <TextField
-                          name="name"
-                          label="Name"
-                          placeholder="Your name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          fullWidth
-                          required
+                    <Box
+                      component="a"
+                      href="mailto:wtrhodes.dev@gmail.com"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2.5,
+                        p: { xs: 2.5, sm: 3 },
+                        borderRadius: 2,
+                        bgcolor: (theme) => `${theme.palette.primary.main}08`,
+                        border: "1px solid",
+                        borderColor: (theme) => `${theme.palette.primary.main}20`,
+                        textDecoration: "none",
+                        color: "inherit",
+                        transition: "all 0.2s ease",
+                        mt: "auto",
+                        "&:hover": {
+                          bgcolor: (theme) => `${theme.palette.primary.main}12`,
+                          borderColor: (theme) => `${theme.palette.primary.main}40`,
+                          transform: "translateX(4px)",
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: { xs: 44, sm: 48 },
+                          height: { xs: 44, sm: 48 },
+                          borderRadius: 2,
+                          bgcolor: (theme) => `${theme.palette.primary.main}20`,
+                          color: "primary.main",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Mail size={24} />
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography
                           sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: 2,
-                              bgcolor: "background.paper",
-                            },
-                          }}
-                        />
-
-                        <TextField
-                          name="email"
-                          type="email"
-                          label="Email"
-                          placeholder="your@email.com"
-                          value={formData.email}
-                          onChange={handleChange}
-                          fullWidth
-                          required
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: 2,
-                              bgcolor: "background.paper",
-                            },
-                          }}
-                        />
-
-                        <TextField
-                          name="message"
-                          label="Message"
-                          placeholder="Tell me about your project or opportunity..."
-                          value={formData.message}
-                          onChange={handleChange}
-                          fullWidth
-                          required
-                          multiline
-                          rows={6}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: 2,
-                              bgcolor: "background.paper",
-                            },
-                          }}
-                        />
-
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          size="large"
-                          startIcon={<SendHorizontal size={18} />}
-                          sx={{
-                            borderRadius: 2,
-                            py: 1.25,
-                            fontSize: { xs: "0.95rem", sm: "1rem" },
+                            color: "text.primary",
+                            fontSize: { xs: "1rem", sm: "1.1rem", md: "1.15rem" },
                             fontWeight: 600,
-                            textTransform: "none",
-                            mt: 1,
+                            mb: 0.5,
                           }}
                         >
-                          Send Message
-                        </Button>
-                      </Stack>
+                          Email Me
+                        </Typography>
+                        <Typography
+                          sx={{
+                            color: "text.secondary",
+                            fontSize: { xs: "0.9rem", sm: "0.95rem" },
+                          }}
+                        >
+                          wtrhodes.dev@gmail.com
+                        </Typography>
+                      </Box>
                     </Box>
                   </Stack>
                 </CardContent>
@@ -201,57 +166,68 @@ export default function ContactPage() {
             </MotionBox>
           </Grid>
 
-          {/* Right Column - Direct Contact & Connect Online */}
+          {/* Connect Online Card */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Stack spacing={4}>
-              {/* Direct Contact */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+            <MotionBox
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              sx={{ height: "100%" }}
+            >
+              <Card
+                elevation={0}
+                sx={{
+                  borderRadius: 3,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  bgcolor: "background.paper",
+                  height: "100%",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    borderColor: "primary.light",
+                    boxShadow: (theme) => `0 8px 32px ${theme.palette.primary.main}14`,
+                    transform: "translateY(-4px)",
+                  },
+                }}
               >
-                <Card
-                  elevation={0}
-                  sx={{
-                    borderRadius: 3,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    bgcolor: "background.paper",
-                  }}
-                >
-                  <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-                    <Stack spacing={2.5}>
-                      <Box>
-                        <Typography
-                          variant="h5"
-                          sx={{
-                            fontWeight: 700,
-                            fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                            mb: 1,
-                            color: "text.primary",
-                          }}
-                        >
-                          Direct Contact
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "text.secondary",
-                            fontSize: { xs: "0.9rem", sm: "0.95rem" },
-                          }}
-                        >
-                          Prefer email? Reach out directly and I'll respond as soon as I can.
-                        </Typography>
-                      </Box>
+                <CardContent sx={{ p: { xs: 3, sm: 4, md: 5 }, height: "100%" }}>
+                  <Stack spacing={3} sx={{ height: "100%" }}>
+                    <Box>
+                      <Typography
+                        variant="h4"
+                        sx={{
+                          fontWeight: 700,
+                          fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
+                          mb: 1.5,
+                          color: "text.primary",
+                        }}
+                      >
+                        Connect Online
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          color: "text.secondary",
+                          fontSize: { xs: "0.95rem", sm: "1rem", md: "1.05rem" },
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        Find me on these platforms to see more of my work and professional activity.
+                      </Typography>
+                    </Box>
 
+                    <Stack spacing={2.5} sx={{ flex: 1, mt: "auto" }}>
+                      {/* GitHub Card */}
                       <Box
                         component="a"
-                        href="mailto:wtrhodes.dev@gmail.com"
+                        href="https://github.com/troyrhodes02"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          gap: 2,
-                          p: 2,
+                          gap: 2.5,
+                          p: { xs: 2.5, sm: 3 },
                           borderRadius: 2,
                           bgcolor: (theme) => `${theme.palette.primary.main}08`,
                           border: "1px solid",
@@ -261,7 +237,8 @@ export default function ContactPage() {
                           transition: "all 0.2s ease",
                           "&:hover": {
                             bgcolor: (theme) => `${theme.palette.primary.main}12`,
-                            borderColor: (theme) => `${theme.palette.primary.main}30`,
+                            borderColor: (theme) => `${theme.palette.primary.main}40`,
+                            transform: "translateX(4px)",
                           },
                         }}
                       >
@@ -270,185 +247,104 @@ export default function ContactPage() {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
+                            width: { xs: 44, sm: 48 },
+                            height: { xs: 44, sm: 48 },
+                            borderRadius: 2,
+                            bgcolor: (theme) => `${theme.palette.primary.main}20`,
                             color: "primary.main",
+                            flexShrink: 0,
                           }}
                         >
-                          <Mail size={20} />
+                          <Github size={24} />
                         </Box>
-                        <Typography
-                          sx={{
-                            color: "text.primary",
-                            fontSize: { xs: "0.95rem", sm: "1rem" },
-                            fontWeight: 500,
-                          }}
-                        >
-                          wtrhodes.dev@gmail.com
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </MotionBox>
-
-              {/* Connect Online */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <Card
-                  elevation={0}
-                  sx={{
-                    borderRadius: 3,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    bgcolor: "background.paper",
-                  }}
-                >
-                  <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-                    <Stack spacing={2.5}>
-                      <Box>
-                        <Typography
-                          variant="h5"
-                          sx={{
-                            fontWeight: 700,
-                            fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                            mb: 1,
-                            color: "text.primary",
-                          }}
-                        >
-                          Connect Online
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "text.secondary",
-                            fontSize: { xs: "0.9rem", sm: "0.95rem" },
-                          }}
-                        >
-                          Find me on these platforms to see more of my work and professional
-                          activity.
-                        </Typography>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography
+                            sx={{
+                              color: "text.primary",
+                              fontSize: { xs: "1rem", sm: "1.1rem" },
+                              fontWeight: 600,
+                              mb: 0.5,
+                            }}
+                          >
+                            GitHub
+                          </Typography>
+                          <Typography
+                            sx={{
+                              color: "text.secondary",
+                              fontSize: { xs: "0.85rem", sm: "0.9rem" },
+                            }}
+                          >
+                            View my code and projects
+                          </Typography>
+                        </Box>
                       </Box>
 
-                      <Stack spacing={2}>
-                        {/* GitHub Card */}
+                      {/* LinkedIn Card */}
+                      <Box
+                        component="a"
+                        href="https://www.linkedin.com/in/wtrhodes/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2.5,
+                          p: { xs: 2.5, sm: 3 },
+                          borderRadius: 2,
+                          bgcolor: (theme) => `${theme.palette.primary.main}08`,
+                          border: "1px solid",
+                          borderColor: (theme) => `${theme.palette.primary.main}20`,
+                          textDecoration: "none",
+                          color: "inherit",
+                          transition: "all 0.2s ease",
+                          "&:hover": {
+                            bgcolor: (theme) => `${theme.palette.primary.main}12`,
+                            borderColor: (theme) => `${theme.palette.primary.main}40`,
+                            transform: "translateX(4px)",
+                          },
+                        }}
+                      >
                         <Box
-                          component="a"
-                          href="https://github.com/troyrhodes02"
-                          target="_blank"
-                          rel="noopener noreferrer"
                           sx={{
                             display: "flex",
                             alignItems: "center",
-                            gap: 2,
-                            p: 2,
+                            justifyContent: "center",
+                            width: { xs: 44, sm: 48 },
+                            height: { xs: 44, sm: 48 },
                             borderRadius: 2,
-                            bgcolor: (theme) => `${theme.palette.primary.main}08`,
-                            border: "1px solid",
-                            borderColor: (theme) => `${theme.palette.primary.main}20`,
-                            textDecoration: "none",
-                            color: "inherit",
-                            transition: "all 0.2s ease",
-                            "&:hover": {
-                              bgcolor: (theme) => `${theme.palette.primary.main}12`,
-                              borderColor: (theme) => `${theme.palette.primary.main}30`,
-                            },
+                            bgcolor: (theme) => `${theme.palette.primary.main}20`,
+                            color: "primary.main",
+                            flexShrink: 0,
                           }}
                         >
-                          <Box
+                          <Linkedin size={24} />
+                        </Box>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              color: "primary.main",
+                              color: "text.primary",
+                              fontSize: { xs: "1rem", sm: "1.1rem" },
+                              fontWeight: 600,
+                              mb: 0.5,
                             }}
                           >
-                            <Github size={20} />
-                          </Box>
-                          <Box sx={{ flex: 1 }}>
-                            <Typography
-                              sx={{
-                                color: "text.primary",
-                                fontSize: { xs: "0.95rem", sm: "1rem" },
-                                fontWeight: 600,
-                                mb: 0.25,
-                              }}
-                            >
-                              GitHub
-                            </Typography>
-                            <Typography
-                              sx={{
-                                color: "text.secondary",
-                                fontSize: { xs: "0.8rem", sm: "0.85rem" },
-                              }}
-                            >
-                              View my code and projects
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* LinkedIn Card */}
-                        <Box
-                          component="a"
-                          href="https://www.linkedin.com/in/williamrhodespvamu/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 2,
-                            p: 2,
-                            borderRadius: 2,
-                            bgcolor: (theme) => `${theme.palette.primary.main}08`,
-                            border: "1px solid",
-                            borderColor: (theme) => `${theme.palette.primary.main}20`,
-                            textDecoration: "none",
-                            color: "inherit",
-                            transition: "all 0.2s ease",
-                            "&:hover": {
-                              bgcolor: (theme) => `${theme.palette.primary.main}12`,
-                              borderColor: (theme) => `${theme.palette.primary.main}30`,
-                            },
-                          }}
-                        >
-                          <Box
+                            LinkedIn
+                          </Typography>
+                          <Typography
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              color: "primary.main",
+                              color: "text.secondary",
+                              fontSize: { xs: "0.85rem", sm: "0.9rem" },
                             }}
                           >
-                            <Linkedin size={20} />
-                          </Box>
-                          <Box sx={{ flex: 1 }}>
-                            <Typography
-                              sx={{
-                                color: "text.primary",
-                                fontSize: { xs: "0.95rem", sm: "1rem" },
-                                fontWeight: 600,
-                                mb: 0.25,
-                              }}
-                            >
-                              LinkedIn
-                            </Typography>
-                            <Typography
-                              sx={{
-                                color: "text.secondary",
-                                fontSize: { xs: "0.8rem", sm: "0.85rem" },
-                              }}
-                            >
-                              Connect professionally
-                            </Typography>
-                          </Box>
+                            Connect professionally
+                          </Typography>
                         </Box>
-                      </Stack>
+                      </Box>
                     </Stack>
-                  </CardContent>
-                </Card>
-              </MotionBox>
-            </Stack>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </MotionBox>
           </Grid>
         </Grid>
       </Container>

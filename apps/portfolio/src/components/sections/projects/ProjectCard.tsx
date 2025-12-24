@@ -1,11 +1,11 @@
 "use client";
 
-import { Box, Card, CardContent, Stack, Typography, Chip, Button } from "@mui/material";
+import { Box, Card, CardContent, Chip, Button, Stack, Typography } from "@mui/material";
 import { Github, ExternalLink } from "lucide-react";
 
 export interface Project {
   id: string;
-  category: "Frontend" | "Full-Stack" | "Automation / Tools";
+  tags: string[];
   title: string;
   description: string;
   problemSolved: string;
@@ -45,20 +45,24 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         sx={{ p: { xs: 3, sm: 3.5 }, flex: 1, display: "flex", flexDirection: "column" }}
       >
         <Stack spacing={3} sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          {/* Category Tag */}
-          <Chip
-            label={project.category}
-            size="small"
-            sx={{
-              alignSelf: "flex-start",
-              height: 26,
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              bgcolor: (theme) => `${theme.palette.primary.main}14`,
-              color: "primary.main",
-              borderRadius: 1,
-            }}
-          />
+          {/* Category Tags */}
+          <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+            {project.tags.map((tag) => (
+              <Chip
+                key={tag}
+                label={tag}
+                size="small"
+                sx={{
+                  height: 26,
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  bgcolor: (theme) => `${theme.palette.primary.main}14`,
+                  color: "primary.main",
+                  borderRadius: 1,
+                }}
+              />
+            ))}
+          </Stack>
 
           {/* Title */}
           <Typography
@@ -154,7 +158,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           >
             <Stack spacing={1.25}>
               {project.features.map((feature, index) => (
-                <Stack key={index} direction="row" spacing={1.5} alignItems="flex-start">
+                <Stack key={index} direction="row" spacing={1.5} alignItems="baseline">
                   <Box
                     sx={{
                       width: 6,
@@ -162,7 +166,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                       borderRadius: "50%",
                       bgcolor: "secondary.main",
                       flexShrink: 0,
-                      mt: 0.5,
+                      position: "relative",
+                      top: "-0.15em",
                     }}
                   />
                   <Typography

@@ -21,7 +21,6 @@ interface Project {
   technologies: string[];
   features: string[];
   links: {
-    details: string;
     github?: string;
     live?: string;
   };
@@ -31,62 +30,57 @@ const projects: Project[] = [
   {
     title: "FreightFi",
     description:
-      "A SaaS platform for freight and logistics management with real-time tracking, invoicing, and carrier management.",
-    technologies: ["TypeScript", "Next.js", "Prisma", "PostgreSQL", "Tailwind CSS"],
+      "A SaaS platform that automates freight audit analysis by reconciling rate confirmations and invoices in seconds instead of manual reviews.",
+    technologies: ["TypeScript", "Next.js", "Node.js", "Prisma", "Supabase", "Stripe"],
     features: [
-      "Real-time shipment tracking dashboard",
-      "Automated invoicing and payment processing",
-      "Multi-tenant architecture with role-based access",
+      "Automated document-based audit analysis",
+      "Line-item discrepancy detection",
+      "Multi-tenant SaaS architecture",
     ],
     links: {
-      details: "/projects/freightfi",
-      github: "https://github.com",
-      live: "https://freightfi.com",
+      live: "https://freightfi.app",
     },
   },
   {
-    title: "IEPFlow",
+    title: "PremierLeaf",
     description:
-      "Streamlined IEP (Individualized Education Program) management system for educators and administrators.",
-    technologies: ["React", "Node.js", "Express", "MongoDB", "MUI"],
+      "A premium e-commerce and mobile platform focused on wellness products and habit-driven self-care experiences for professionals.",
+    technologies: ["TypeScript", "React", "Next.js", "React Native", "Stripe", "GraphQL"],
     features: [
-      "Document generation and e-signatures",
-      "Progress tracking and reporting",
-      "Parent portal with secure messaging",
+      "Full-stack e-commerce with payments",
+      "Cross-platform mobile application",
+      "Brand-driven, conversion-focused UI",
     ],
     links: {
-      details: "/projects/iepflow",
-      github: "https://github.com",
+      live: "https://www.premierleaf.com",
     },
   },
   {
-    title: "Recruito",
+    title: "PolitiMap",
     description:
-      "AI-powered recruitment automation tool that helps companies streamline their hiring pipeline.",
-    technologies: ["TypeScript", "React", "Fastify", "PostgreSQL", "OpenAI"],
+      "A civic engagement platform that visualizes political data using interactive maps and AI-powered insights across web and mobile.",
+    technologies: ["React", "React Native", "TypeScript", "GraphQL", "Mapbox", "Firebase"],
     features: [
-      "Automated resume parsing and scoring",
-      "Interview scheduling automation",
-      "Candidate analytics dashboard",
+      "Interactive map-based political data",
+      "Cross-platform web and mobile experience",
+      "GraphQL-powered data layer",
     ],
     links: {
-      details: "/projects/recruito",
-      github: "https://github.com",
-      live: "https://recruito.io",
+      live: "https://www.politimap.us",
     },
   },
   {
-    title: "Valour",
-    description: "A modern portfolio and project management tool for creative professionals.",
-    technologies: ["Next.js", "tRPC", "Prisma", "Supabase", "Framer Motion"],
+    title: "D.I.G.I.T.A.",
+    description:
+      "An AI-powered DevOps assistant that inspects GitHub repositories and delivers structured architecture and codebase summaries via Discord.",
+    technologies: ["TypeScript", "Discord.js", "GitHub API", "OpenAI"],
     features: [
-      "Drag-and-drop portfolio builder",
-      "Client collaboration features",
-      "Analytics and engagement tracking",
+      "AI-driven repository inspection",
+      "Structured codebase summaries",
+      "Automated chunking for large repos",
     ],
     links: {
-      details: "/projects/valour",
-      github: "https://github.com",
+      github: "https://github.com/troyrhodes02/digita",
     },
   },
 ];
@@ -185,7 +179,7 @@ function ProjectCard({ project }: { project: Project }) {
           {/* Features */}
           <Stack spacing={1} sx={{ flex: 1 }}>
             {project.features.map((feature, index) => (
-              <Stack key={index} direction="row" spacing={1.5} alignItems="center">
+              <Stack key={index} direction="row" spacing={1.5} alignItems="baseline">
                 <Box
                   sx={{
                     width: 6,
@@ -193,6 +187,8 @@ function ProjectCard({ project }: { project: Project }) {
                     borderRadius: "50%",
                     bgcolor: "secondary.main",
                     flexShrink: 0,
+                    position: "relative",
+                    top: "-0.15em",
                   }}
                 />
                 <Typography
@@ -218,48 +214,27 @@ function ProjectCard({ project }: { project: Project }) {
             flexWrap="wrap"
             useFlexGap
           >
-            <Button
-              component={Link}
-              href={project.links.details}
-              variant="outlined"
-              size="small"
-              endIcon={<ArrowRight size={14} />}
-              sx={{
-                borderRadius: 1.5,
-                px: 2,
-                py: 0.75,
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                textTransform: "none",
-                borderColor: "primary.main",
-                color: "primary.main",
-                "&:hover": {
-                  borderColor: "primary.dark",
-                  bgcolor: (theme) => `${theme.palette.primary.main}08`,
-                },
-              }}
-            >
-              View Details
-            </Button>
-
             {project.links.github && (
               <Button
                 component="a"
                 href={project.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
+                variant="outlined"
                 size="small"
-                startIcon={<Github size={14} />}
+                startIcon={<Github size={16} />}
                 sx={{
-                  color: "text.secondary",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
+                  borderRadius: 1.5,
+                  px: 2.5,
+                  py: 1,
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
                   textTransform: "none",
-                  px: 1,
-                  minWidth: "auto",
+                  borderColor: "primary.main",
+                  color: "primary.main",
                   "&:hover": {
-                    bgcolor: "action.hover",
-                    color: "text.primary",
+                    borderColor: "primary.dark",
+                    bgcolor: (theme) => `${theme.palette.primary.main}08`,
                   },
                 }}
               >
@@ -273,22 +248,23 @@ function ProjectCard({ project }: { project: Project }) {
                 href={project.links.live}
                 target="_blank"
                 rel="noopener noreferrer"
+                variant="contained"
                 size="small"
-                startIcon={<ExternalLink size={14} />}
+                endIcon={<ExternalLink size={16} />}
                 sx={{
-                  color: "text.secondary",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
+                  borderRadius: 1.5,
+                  px: 2.5,
+                  py: 1,
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
                   textTransform: "none",
-                  px: 1,
-                  minWidth: "auto",
+                  boxShadow: (theme) => `0 4px 14px ${theme.palette.primary.main}40`,
                   "&:hover": {
-                    bgcolor: "action.hover",
-                    color: "text.primary",
+                    boxShadow: (theme) => `0 6px 20px ${theme.palette.primary.main}50`,
                   },
                 }}
               >
-                Live
+                Live Demo
               </Button>
             )}
           </Stack>

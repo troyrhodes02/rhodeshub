@@ -91,7 +91,7 @@ export default function Connect() {
           >
             <Button
               component={Link}
-              href="/contact"
+              href="/pages/contact"
               variant="contained"
               size="large"
               endIcon={<ArrowRight size={18} />}

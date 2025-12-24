@@ -1,9 +1,20 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Box, Container, Grid, Stack, Typography, Card, CardContent } from "@mui/material";
-import { Code2, Server, Database, Wrench, Zap } from "lucide-react";
+import {
+  Box,
+  Container,
+  Grid,
+  Stack,
+  Typography,
+  Card,
+  CardContent,
+  Link as MuiLink,
+} from "@mui/material";
+import { Code2, Server, Database, Wrench, Zap, ExternalLink } from "lucide-react";
 import { ElementType } from "react";
+import { getRelativeTime } from "@/utils/relativeTime";
 
 interface SkillCategory {
   title: string;
@@ -158,6 +169,45 @@ function SkillCard({ category, index }: { category: SkillCategory; index: number
 }
 
 function NowBuildingCard() {
+  const [repoData, setRepoData] = useState<{
+    description: string;
+    html_url: string;
+    pushed_at: string;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fallback hardcoded text
+  const fallbackDescription =
+    "A TypeScript-powered job intelligence tool that surfaces new React/Node roles and helps prioritize applications with smart filtering and automated tracking.";
+
+  useEffect(() => {
+    const fetchRepoData = async () => {
+      try {
+        const response = await fetch("/api/github/now-building");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.description && data.html_url && data.pushed_at) {
+            setRepoData({
+              description: data.description,
+              html_url: data.html_url,
+              pushed_at: data.pushed_at,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch GitHub repo data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRepoData();
+  }, []);
+
+  const description = repoData?.description || fallbackDescription;
+  const relativeTime = repoData?.pushed_at ? getRelativeTime(repoData.pushed_at) : null;
+  const repoUrl = repoData?.html_url;
+
   return (
     <MotionBox
       initial={{ opacity: 0, y: 20 }}
@@ -242,9 +292,9 @@ function NowBuildingCard() {
             </Box>
 
             {/* Content */}
-            <Stack spacing={1}>
+            <Stack spacing={1} sx={{ flex: 1 }}>
               {/* Label */}
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
                 <Typography
                   variant="overline"
                   sx={{
@@ -296,9 +346,47 @@ function NowBuildingCard() {
                   fontSize: { xs: "0.875rem", sm: "0.95rem" },
                 }}
               >
-                A TypeScript-powered job intelligence tool that surfaces new React/Node roles and
-                helps prioritize applications with smart filtering and automated tracking.
+                {description}
               </Typography>
+
+              {/* Updated time and link */}
+              {!isLoading && (
+                <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
+                  {relativeTime && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "text.secondary",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      {relativeTime}
+                    </Typography>
+                  )}
+                  {repoUrl && (
+                    <MuiLink
+                      href={repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 0.5,
+                        color: "primary.main",
+                        fontSize: "0.75rem",
+                        textDecoration: "none",
+                        fontWeight: 500,
+                        "&:hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
+                    >
+                      View on GitHub
+                      <ExternalLink size={12} />
+                    </MuiLink>
+                  )}
+                </Stack>
+              )}
             </Stack>
           </Stack>
         </CardContent>

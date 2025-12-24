@@ -45,7 +45,7 @@ export default function Navbar() {
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 50,
+        zIndex: 1100, // Higher than overlay to ensure navbar is always accessible
         backgroundColor: "background.default",
         boxShadow: "none",
         borderBottom: "1px solid",
@@ -209,7 +209,7 @@ export default function Navbar() {
             </IconButton>
             <IconButton
               component="a"
-              href="https://www.linkedin.com/in/williamrhodespvamu/"
+              href="https://www.linkedin.com/in/wtrhodes/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
@@ -369,7 +369,7 @@ export default function Navbar() {
                 </IconButton>
                 <IconButton
                   component="a"
-                  href="https://www.linkedin.com/in/williamrhodespvamu/"
+                  href="https://www.linkedin.com/in/wtrhodes/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
