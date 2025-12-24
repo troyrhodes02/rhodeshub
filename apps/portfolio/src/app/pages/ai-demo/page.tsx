@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   Box,
   Container,
@@ -13,7 +14,15 @@ import {
   useTheme,
   Chip,
 } from "@mui/material";
-import { Sparkles, FileText, Clipboard, CheckCircle2, Construction, Zap } from "lucide-react";
+import {
+  Sparkles,
+  FileText,
+  Clipboard,
+  CheckCircle2,
+  Construction,
+  Zap,
+  ArrowLeft,
+} from "lucide-react";
 
 const MotionBox = motion(Box);
 
@@ -61,6 +70,16 @@ export default function AiDemo() {
     console.log("Analyzing...", { resumeFile, jobDescription });
   };
 
+  // Lock body scroll when component mounts (modal is always visible on this page)
+  useEffect(() => {
+    // Prevent body scroll
+    document.body.style.overflow = "hidden";
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
     <Box
       sx={{
@@ -77,12 +96,21 @@ export default function AiDemo() {
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 999, // Below navbar z-index (navbar is 50, but we want overlay below it)
+          zIndex: 999,
           display: "flex",
-          alignItems: "center",
+          alignItems: { xs: "flex-start", sm: "center" },
           justifyContent: "center",
           bgcolor: "rgba(0, 0, 0, 0.7)",
           backdropFilter: "blur(8px)",
+          overflowY: "auto",
+          overflowX: "hidden",
+          WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
+          py: { xs: 3, sm: 4 },
+          px: { xs: 2, sm: 3 },
+        }}
+        onClick={(e) => {
+          // Prevent clicks from bubbling to background
+          e.stopPropagation();
         }}
       >
         <MotionBox
@@ -91,8 +119,16 @@ export default function AiDemo() {
           transition={{ duration: 0.5 }}
           sx={{
             position: "relative",
-            maxWidth: { xs: "90%", sm: 600, md: 700 },
+            maxWidth: { xs: "100%", sm: 600, md: 700 },
             width: "100%",
+            my: "auto",
+            maxHeight: { xs: "calc(100vh - 100px)", sm: "90vh" },
+            display: "flex",
+            flexDirection: "column",
+          }}
+          onClick={(e) => {
+            // Prevent clicks from bubbling
+            e.stopPropagation();
           }}
         >
           {/* Animated Background Glow */}
@@ -127,9 +163,60 @@ export default function AiDemo() {
               overflow: "visible",
               boxShadow: (theme) =>
                 `0 20px 60px ${theme.palette.primary.main}30, 0 0 0 1px ${theme.palette.primary.main}20`,
+              display: "flex",
+              flexDirection: "column",
+              maxHeight: "100%",
             }}
           >
-            <CardContent sx={{ p: { xs: 4, sm: 5, md: 6 } }}>
+            <CardContent
+              sx={{
+                p: { xs: 3, sm: 5, md: 6 },
+                display: "flex",
+                flexDirection: "column",
+                overflowY: "auto",
+                overflowX: "hidden",
+                WebkitOverflowScrolling: "touch",
+                "&::-webkit-scrollbar": {
+                  width: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "transparent",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: (theme) => theme.palette.divider,
+                  borderRadius: "4px",
+                  "&:hover": {
+                    background: (theme) => theme.palette.text.secondary,
+                  },
+                },
+              }}
+            >
+              {/* Back to Home Button */}
+              <Box sx={{ mb: 3 }}>
+                <Button
+                  component={Link}
+                  href="/"
+                  startIcon={<ArrowLeft size={18} />}
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 2,
+                    px: 2.5,
+                    py: 1,
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    borderColor: "primary.main",
+                    color: "primary.main",
+                    "&:hover": {
+                      borderColor: "primary.dark",
+                      bgcolor: (theme) => `${theme.palette.primary.main}08`,
+                    },
+                  }}
+                >
+                  Back to Home
+                </Button>
+              </Box>
+
               <Box sx={{ textAlign: "center", mb: 4 }}>
                 {/* Construction Icon with Animation */}
                 <MotionBox
