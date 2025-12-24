@@ -8,7 +8,7 @@ const experiences: Experience[] = [
   {
     id: "freightfi",
     company: "FreightFi",
-    title: "Software Engineer",
+    title: "Independent Contributor",
     location: "Remote",
     startDate: "October 2025",
     endDate: "Present",
