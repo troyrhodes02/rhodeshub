@@ -33,18 +33,18 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "RhodesHub — AI-powered portfolio",
+  title: "RhodesHub — AI-Powered Portfolio",
   description:
     "Full-stack software engineer building modern SaaS applications, automation tools, and AI-powered systems. Explore projects, experience, and connect.",
   icons: {
     icon: "/rhodes-hub-logo-dark.png",
   },
   openGraph: {
-    title: "RhodesHub — AI-powered portfolio",
+    title: "RhodesHub — AI-Powered Portfolio",
     description:
       "Full-stack software engineer building modern SaaS applications, automation tools, and AI-powered systems.",
     url: "https://rhodeshub.dev",
-    siteName: "RhodesHub",
+    siteName: "RhodesHub — AI-Powered Portfolio",
     images: [
       {
         url: "https://rhodeshub.dev/og-image.png",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RhodesHub — AI-powered portfolio",
+    title: "RhodesHub — AI-Powered Portfolio",
     description:
       "Full-stack software engineer building modern SaaS applications, automation tools, and AI-powered systems.",
     images: ["https://rhodeshub.dev/og-image.png"],
