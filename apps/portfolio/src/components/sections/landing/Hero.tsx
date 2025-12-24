@@ -86,10 +86,10 @@ export default function Hero() {
                 sx={{
                   fontWeight: 800,
                   letterSpacing: "-0.03em",
-                  lineHeight: 1,
-                  whiteSpace: "nowrap",
+                  lineHeight: { xs: 1.1, sm: 1 },
+                  whiteSpace: { xs: "normal", sm: "nowrap" },
                   fontSize: {
-                    xs: "2.75rem",
+                    xs: "2.5rem",
                     sm: "4rem",
                     md: "4.5rem",
                     lg: "5.5rem",
