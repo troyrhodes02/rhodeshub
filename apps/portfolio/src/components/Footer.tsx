@@ -127,7 +127,11 @@ export default function Footer() {
             {/* LinkedIn */}
             <IconButton
               component="a"
+<<<<<<< HEAD
               href="https://www.linkedin.com/in/williamrhodespvamu/"
+=======
+              href="https://www.linkedin.com/in/wtrhodes/"
+>>>>>>> master
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"

@@ -21,7 +21,10 @@ interface Project {
   technologies: string[];
   features: string[];
   links: {
+<<<<<<< HEAD
     details: string;
+=======
+>>>>>>> master
     github?: string;
     live?: string;
   };
@@ -31,6 +34,7 @@ const projects: Project[] = [
   {
     title: "FreightFi",
     description:
+<<<<<<< HEAD
       "A SaaS platform for freight and logistics management with real-time tracking, invoicing, and carrier management.",
     technologies: ["TypeScript", "Next.js", "Prisma", "PostgreSQL", "Tailwind CSS"],
     features: [
@@ -87,6 +91,59 @@ const projects: Project[] = [
     links: {
       details: "/projects/valour",
       github: "https://github.com",
+=======
+      "A SaaS platform that automates freight audit analysis by reconciling rate confirmations and invoices in seconds instead of manual reviews.",
+    technologies: ["TypeScript", "Next.js", "Node.js", "Prisma", "Supabase", "Stripe"],
+    features: [
+      "Automated document-based audit analysis",
+      "Line-item discrepancy detection",
+      "Multi-tenant SaaS architecture",
+    ],
+    links: {
+      live: "https://freightfi.app",
+    },
+  },
+  {
+    title: "PremierLeaf",
+    description:
+      "A premium e-commerce and mobile platform focused on wellness products and habit-driven self-care experiences for professionals.",
+    technologies: ["TypeScript", "React", "Next.js", "React Native", "Stripe", "GraphQL"],
+    features: [
+      "Full-stack e-commerce with payments",
+      "Cross-platform mobile application",
+      "Brand-driven, conversion-focused UI",
+    ],
+    links: {
+      live: "https://www.premierleaf.com",
+    },
+  },
+  {
+    title: "PolitiMap",
+    description:
+      "A civic engagement platform that visualizes political data using interactive maps and AI-powered insights across web and mobile.",
+    technologies: ["React", "React Native", "TypeScript", "GraphQL", "Mapbox", "Firebase"],
+    features: [
+      "Interactive map-based political data",
+      "Cross-platform web and mobile experience",
+      "GraphQL-powered data layer",
+    ],
+    links: {
+      live: "https://www.politimap.us",
+    },
+  },
+  {
+    title: "D.I.G.I.T.A.",
+    description:
+      "An AI-powered DevOps assistant that inspects GitHub repositories and delivers structured architecture and codebase summaries via Discord.",
+    technologies: ["TypeScript", "Discord.js", "GitHub API", "OpenAI"],
+    features: [
+      "AI-driven repository inspection",
+      "Structured codebase summaries",
+      "Automated chunking for large repos",
+    ],
+    links: {
+      github: "https://github.com/troyrhodes02/digita",
+>>>>>>> master
     },
   },
 ];
@@ -185,7 +242,11 @@ function ProjectCard({ project }: { project: Project }) {
           {/* Features */}
           <Stack spacing={1} sx={{ flex: 1 }}>
             {project.features.map((feature, index) => (
+<<<<<<< HEAD
               <Stack key={index} direction="row" spacing={1.5} alignItems="center">
+=======
+              <Stack key={index} direction="row" spacing={1.5} alignItems="baseline">
+>>>>>>> master
                 <Box
                   sx={{
                     width: 6,
@@ -193,6 +254,11 @@ function ProjectCard({ project }: { project: Project }) {
                     borderRadius: "50%",
                     bgcolor: "secondary.main",
                     flexShrink: 0,
+<<<<<<< HEAD
+=======
+                    position: "relative",
+                    top: "-0.15em",
+>>>>>>> master
                   }}
                 />
                 <Typography
@@ -218,6 +284,7 @@ function ProjectCard({ project }: { project: Project }) {
             flexWrap="wrap"
             useFlexGap
           >
+<<<<<<< HEAD
             <Button
               component={Link}
               href={project.links.details}
@@ -242,12 +309,15 @@ function ProjectCard({ project }: { project: Project }) {
               View Details
             </Button>
 
+=======
+>>>>>>> master
             {project.links.github && (
               <Button
                 component="a"
                 href={project.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
+<<<<<<< HEAD
                 size="small"
                 startIcon={<Github size={14} />}
                 sx={{
@@ -260,6 +330,23 @@ function ProjectCard({ project }: { project: Project }) {
                   "&:hover": {
                     bgcolor: "action.hover",
                     color: "text.primary",
+=======
+                variant="outlined"
+                size="small"
+                startIcon={<Github size={16} />}
+                sx={{
+                  borderRadius: 1.5,
+                  px: 2.5,
+                  py: 1,
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  borderColor: "primary.main",
+                  color: "primary.main",
+                  "&:hover": {
+                    borderColor: "primary.dark",
+                    bgcolor: (theme) => `${theme.palette.primary.main}08`,
+>>>>>>> master
                   },
                 }}
               >
@@ -273,6 +360,7 @@ function ProjectCard({ project }: { project: Project }) {
                 href={project.links.live}
                 target="_blank"
                 rel="noopener noreferrer"
+<<<<<<< HEAD
                 size="small"
                 startIcon={<ExternalLink size={14} />}
                 sx={{
@@ -289,6 +377,25 @@ function ProjectCard({ project }: { project: Project }) {
                 }}
               >
                 Live
+=======
+                variant="contained"
+                size="small"
+                endIcon={<ExternalLink size={16} />}
+                sx={{
+                  borderRadius: 1.5,
+                  px: 2.5,
+                  py: 1,
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  boxShadow: (theme) => `0 4px 14px ${theme.palette.primary.main}40`,
+                  "&:hover": {
+                    boxShadow: (theme) => `0 6px 20px ${theme.palette.primary.main}50`,
+                  },
+                }}
+              >
+                Live Demo
+>>>>>>> master
               </Button>
             )}
           </Stack>
