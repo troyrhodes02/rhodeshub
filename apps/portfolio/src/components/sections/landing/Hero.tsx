@@ -16,11 +16,7 @@ import {
 } from "@mui/material";
 import { ArrowRight, Download, Code2, Layers, Zap, Database } from "lucide-react";
 
-<<<<<<< HEAD
-const techStack = ["TypeScript", "React", "Next.js", "Node.js", "Tailwind CSS", "Prisma"];
-=======
 const techStack = ["TypeScript", "React", "Next.js", "Node.js", "Material UI", "Prisma"];
->>>>>>> master
 
 const MotionBox = motion(Box);
 const MotionTypography = motion(Typography);
@@ -81,13 +77,6 @@ export default function Hero() {
               transition={{ duration: 0.6 }}
               sx={{ textAlign: { xs: "center", md: "left" } }}
             >
-<<<<<<< HEAD
-              <MotionBox
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                sx={{ display: "inline-flex", mb: 2, position: "relative" }}
-=======
               {/* Name as focal point */}
               <MotionTypography
                 variant="h1"
@@ -127,7 +116,6 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 sx={{ display: "inline-flex", mb: 3, position: "relative" }}
->>>>>>> master
               >
                 <Chip
                   label="Full-Stack Software Engineer"
@@ -157,27 +145,11 @@ export default function Hero() {
                 />
               </MotionBox>
 
-<<<<<<< HEAD
-=======
               {/* Tagline */}
->>>>>>> master
               <MotionTypography
                 variant="h2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-<<<<<<< HEAD
-                transition={{ delay: 0.2 }}
-                sx={{
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.08,
-                  fontSize: {
-                    xs: "2rem",
-                    sm: "2.6rem",
-                    md: "3.2rem",
-                    lg: "3.6rem",
-                  },
-=======
                 transition={{ delay: 0.3 }}
                 sx={{
                   fontWeight: 700,
@@ -190,7 +162,6 @@ export default function Hero() {
                     lg: "2.25rem",
                   },
                   color: "text.primary",
->>>>>>> master
                 }}
               >
                 Building modern{" "}
@@ -211,11 +182,7 @@ export default function Hero() {
                 variant="body1"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-<<<<<<< HEAD
-                transition={{ delay: 0.3 }}
-=======
                 transition={{ delay: 0.4 }}
->>>>>>> master
                 sx={{
                   mt: { xs: 2, sm: 3 },
                   mx: { xs: "auto", md: 0 },
@@ -231,11 +198,7 @@ export default function Hero() {
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-<<<<<<< HEAD
-                transition={{ delay: 0.4 }}
-=======
                 transition={{ delay: 0.5 }}
->>>>>>> master
                 sx={{ mt: 4 }}
               >
                 <Stack
@@ -245,11 +208,7 @@ export default function Hero() {
                 >
                   <Button
                     component={Link}
-<<<<<<< HEAD
-                    href="/projects"
-=======
                     href="/pages/projects"
->>>>>>> master
                     variant="contained"
                     size="large"
                     endIcon={<ArrowRight size={18} />}
@@ -259,15 +218,9 @@ export default function Hero() {
                   </Button>
 
                   <Button
-<<<<<<< HEAD
-                    component={Link}
-                    href="#"
-                    download
-=======
                     component="a"
                     href="/resume/William_Rhodes_Resume.pdf"
                     download="William_Rhodes_Resume.pdf"
->>>>>>> master
                     variant="outlined"
                     size="large"
                     startIcon={<Download size={18} />}
@@ -288,11 +241,7 @@ export default function Hero() {
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-<<<<<<< HEAD
-                transition={{ delay: 0.5 }}
-=======
                 transition={{ delay: 0.6 }}
->>>>>>> master
                 sx={{ mt: 4 }}
               >
                 <Typography

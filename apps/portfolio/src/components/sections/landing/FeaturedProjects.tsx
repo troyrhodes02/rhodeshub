@@ -21,10 +21,6 @@ interface Project {
   technologies: string[];
   features: string[];
   links: {
-<<<<<<< HEAD
-    details: string;
-=======
->>>>>>> master
     github?: string;
     live?: string;
   };
@@ -34,64 +30,6 @@ const projects: Project[] = [
   {
     title: "FreightFi",
     description:
-<<<<<<< HEAD
-      "A SaaS platform for freight and logistics management with real-time tracking, invoicing, and carrier management.",
-    technologies: ["TypeScript", "Next.js", "Prisma", "PostgreSQL", "Tailwind CSS"],
-    features: [
-      "Real-time shipment tracking dashboard",
-      "Automated invoicing and payment processing",
-      "Multi-tenant architecture with role-based access",
-    ],
-    links: {
-      details: "/projects/freightfi",
-      github: "https://github.com",
-      live: "https://freightfi.com",
-    },
-  },
-  {
-    title: "IEPFlow",
-    description:
-      "Streamlined IEP (Individualized Education Program) management system for educators and administrators.",
-    technologies: ["React", "Node.js", "Express", "MongoDB", "MUI"],
-    features: [
-      "Document generation and e-signatures",
-      "Progress tracking and reporting",
-      "Parent portal with secure messaging",
-    ],
-    links: {
-      details: "/projects/iepflow",
-      github: "https://github.com",
-    },
-  },
-  {
-    title: "Recruito",
-    description:
-      "AI-powered recruitment automation tool that helps companies streamline their hiring pipeline.",
-    technologies: ["TypeScript", "React", "Fastify", "PostgreSQL", "OpenAI"],
-    features: [
-      "Automated resume parsing and scoring",
-      "Interview scheduling automation",
-      "Candidate analytics dashboard",
-    ],
-    links: {
-      details: "/projects/recruito",
-      github: "https://github.com",
-      live: "https://recruito.io",
-    },
-  },
-  {
-    title: "Valour",
-    description: "A modern portfolio and project management tool for creative professionals.",
-    technologies: ["Next.js", "tRPC", "Prisma", "Supabase", "Framer Motion"],
-    features: [
-      "Drag-and-drop portfolio builder",
-      "Client collaboration features",
-      "Analytics and engagement tracking",
-    ],
-    links: {
-      details: "/projects/valour",
-      github: "https://github.com",
-=======
       "A SaaS platform that automates freight audit analysis by reconciling rate confirmations and invoices in seconds instead of manual reviews.",
     technologies: ["TypeScript", "Next.js", "Node.js", "Prisma", "Supabase", "Stripe"],
     features: [
@@ -143,7 +81,6 @@ const projects: Project[] = [
     ],
     links: {
       github: "https://github.com/troyrhodes02/digita",
->>>>>>> master
     },
   },
 ];
@@ -242,11 +179,7 @@ function ProjectCard({ project }: { project: Project }) {
           {/* Features */}
           <Stack spacing={1} sx={{ flex: 1 }}>
             {project.features.map((feature, index) => (
-<<<<<<< HEAD
-              <Stack key={index} direction="row" spacing={1.5} alignItems="center">
-=======
               <Stack key={index} direction="row" spacing={1.5} alignItems="baseline">
->>>>>>> master
                 <Box
                   sx={{
                     width: 6,
@@ -254,11 +187,8 @@ function ProjectCard({ project }: { project: Project }) {
                     borderRadius: "50%",
                     bgcolor: "secondary.main",
                     flexShrink: 0,
-<<<<<<< HEAD
-=======
                     position: "relative",
                     top: "-0.15em",
->>>>>>> master
                   }}
                 />
                 <Typography
@@ -284,53 +214,12 @@ function ProjectCard({ project }: { project: Project }) {
             flexWrap="wrap"
             useFlexGap
           >
-<<<<<<< HEAD
-            <Button
-              component={Link}
-              href={project.links.details}
-              variant="outlined"
-              size="small"
-              endIcon={<ArrowRight size={14} />}
-              sx={{
-                borderRadius: 1.5,
-                px: 2,
-                py: 0.75,
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                textTransform: "none",
-                borderColor: "primary.main",
-                color: "primary.main",
-                "&:hover": {
-                  borderColor: "primary.dark",
-                  bgcolor: (theme) => `${theme.palette.primary.main}08`,
-                },
-              }}
-            >
-              View Details
-            </Button>
-
-=======
->>>>>>> master
             {project.links.github && (
               <Button
                 component="a"
                 href={project.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
-<<<<<<< HEAD
-                size="small"
-                startIcon={<Github size={14} />}
-                sx={{
-                  color: "text.secondary",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
-                  textTransform: "none",
-                  px: 1,
-                  minWidth: "auto",
-                  "&:hover": {
-                    bgcolor: "action.hover",
-                    color: "text.primary",
-=======
                 variant="outlined"
                 size="small"
                 startIcon={<Github size={16} />}
@@ -346,7 +235,6 @@ function ProjectCard({ project }: { project: Project }) {
                   "&:hover": {
                     borderColor: "primary.dark",
                     bgcolor: (theme) => `${theme.palette.primary.main}08`,
->>>>>>> master
                   },
                 }}
               >
@@ -360,24 +248,6 @@ function ProjectCard({ project }: { project: Project }) {
                 href={project.links.live}
                 target="_blank"
                 rel="noopener noreferrer"
-<<<<<<< HEAD
-                size="small"
-                startIcon={<ExternalLink size={14} />}
-                sx={{
-                  color: "text.secondary",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
-                  textTransform: "none",
-                  px: 1,
-                  minWidth: "auto",
-                  "&:hover": {
-                    bgcolor: "action.hover",
-                    color: "text.primary",
-                  },
-                }}
-              >
-                Live
-=======
                 variant="contained"
                 size="small"
                 endIcon={<ExternalLink size={16} />}
@@ -395,7 +265,6 @@ function ProjectCard({ project }: { project: Project }) {
                 }}
               >
                 Live Demo
->>>>>>> master
               </Button>
             )}
           </Stack>

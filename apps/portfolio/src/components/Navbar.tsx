@@ -45,11 +45,7 @@ export default function Navbar() {
         top: 0,
         left: 0,
         right: 0,
-<<<<<<< HEAD
-        zIndex: 50,
-=======
         zIndex: 1100, // Higher than overlay to ensure navbar is always accessible
->>>>>>> master
         backgroundColor: "background.default",
         boxShadow: "none",
         borderBottom: "1px solid",
@@ -74,10 +70,6 @@ export default function Navbar() {
           sx={{
             display: "flex",
             alignItems: "center",
-<<<<<<< HEAD
-            gap: 1.5,
-=======
->>>>>>> master
             textDecoration: "none",
             color: "inherit",
             flex: { xs: 0, lg: 1 },
@@ -102,21 +94,6 @@ export default function Navbar() {
           >
             W
           </Box>
-<<<<<<< HEAD
-          <Typography
-            sx={{
-              fontSize: "20px",
-              fontWeight: "bold",
-              color: "text.primary",
-              display: { xs: "none", sm: "block" },
-              whiteSpace: "nowrap",
-            }}
-            variant="h6"
-          >
-            William Rhodes
-          </Typography>
-=======
->>>>>>> master
         </Box>
 
         <Box
@@ -219,11 +196,7 @@ export default function Navbar() {
             </IconButton>
             <IconButton
               component="a"
-<<<<<<< HEAD
-              href="https://www.linkedin.com/in/williamrhodespvamu/"
-=======
               href="https://www.linkedin.com/in/wtrhodes/"
->>>>>>> master
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
@@ -383,11 +356,7 @@ export default function Navbar() {
                 </IconButton>
                 <IconButton
                   component="a"
-<<<<<<< HEAD
-                  href="https://www.linkedin.com/in/williamrhodespvamu/"
-=======
                   href="https://www.linkedin.com/in/wtrhodes/"
->>>>>>> master
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
