@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Box } from "@mui/material";
 import ThemeRegistry from "./components/ThemeRegistry";
 
 // Sora font for headers - variable font
@@ -46,18 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ margin: 0, padding: 0 }}>
       <body className={`${sora.variable} ${inter.variable}`} style={{ margin: 0, padding: 0 }}>
-        <ThemeRegistry>
-          <Box
-            sx={{
-              pt: "64px",
-              minHeight: "calc(100vh - 64px)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Box sx={{ flex: 1 }}>{children}</Box>
-          </Box>
-        </ThemeRegistry>
+        <ThemeRegistry>{children}</ThemeRegistry>
       </body>
     </html>
   );
