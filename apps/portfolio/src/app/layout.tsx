@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   description:
     "Full-stack software engineer building modern SaaS applications, automation tools, and AI-powered systems. Explore projects, experience, and connect.",
   icons: {
-    icon: "/rhodes-hub-logo-dark.png",
+    icon: "/new_rhodeshub_logo.png",
   },
   openGraph: {
     title: "RhodesHub",
@@ -47,10 +47,10 @@ export const metadata: Metadata = {
     siteName: "RhodesHub",
     images: [
       {
-        url: "https://rhodeshub.dev/og-image.png",
+        url: "https://rhodeshub.dev/new_rhodeshub_logo.png",
         width: 1200,
         height: 630,
-        alt: "RhodesHub Portfolio Homepage",
+        alt: "RhodesHub Portfolio",
       },
     ],
     locale: "en_US",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     title: "RhodesHub",
     description:
       "Full-stack software engineer building modern SaaS applications, automation tools, and AI-powered systems.",
-    images: ["https://rhodeshub.dev/og-image.png"],
+    images: ["https://rhodeshub.dev/new_rhodeshub_logo.png"],
   },
 };
 
