@@ -8,11 +8,7 @@ const experiences: Experience[] = [
   {
     id: "freightfi",
     company: "FreightFi",
-<<<<<<< HEAD
-    title: "Software Engineer",
-=======
     title: "Independent Contributor",
->>>>>>> master
     location: "Remote",
     startDate: "October 2025",
     endDate: "Present",
@@ -32,16 +28,6 @@ const experiences: Experience[] = [
     title: "Software Engineer",
     location: "Remote",
     startDate: "January 2024",
-<<<<<<< HEAD
-    endDate: "July 2025",
-    description:
-      "Developed modular, component-driven React/TypeScript interfaces with GraphQL/Apollo, achieving approximately 90% Jest test coverage and improving UI consistency across multiple products. Collaborated on multi-tenant SaaS architecture, translating backend APIs into scalable, reusable UI components with clear state management and design patterns.",
-    contributions: [
-      "Architected and developed full-stack applications using React, TypeScript, GraphQL/Apollo, and React Native/Expo, integrating REST/GraphQL APIs and delivering cross-platform features for iOS, Android, and web",
-      "Built multi-tenant SaaS infrastructure using Supabase, Prisma, and PostgreSQL, implementing RBAC models, secure data workflows, and scalable service boundaries",
-      "Led a 4-engineer team through a 9-month development cycle, delivering production-ready applications to 100+ users across web and mobile, while improving deployment velocity through CI/CD pipelines",
-      "Deployed containerized services on Google Cloud Run with Firebase/MongoDB integrations, supporting both mobile and web client apps and launching MVPs on 3-month cycles",
-=======
     endDate: "August 2025",
     description:
       "ArkaTech is a startup-focused software consultancy where I worked across multiple client-facing products, building full-stack and mobile applications used in production environments. My work spanned SaaS platforms, data-driven applications, and cross-platform mobile experiences, with an emphasis on scalable architecture, clean UI systems, and delivery velocity within agile teams.",
@@ -49,53 +35,21 @@ const experiences: Experience[] = [
       "Architected and developed full-stack applications using React, TypeScript, GraphQL/Apollo, and React Native, delivering production features across web and mobile platforms",
       "Led a 4-engineer team through sprint planning, task delegation, and delivery over a 9-month development cycle, supporting products serving 100+ users",
       "Deployed containerized backend services to Google Cloud Run with Firebase and MongoDB integrations, enabling secure, scalable APIs and faster MVP launches",
->>>>>>> master
     ],
     technologies: [
       "React",
       "TypeScript",
       "GraphQL",
-<<<<<<< HEAD
-      "Apollo",
-      "React Native",
-      "Expo",
-      "Supabase",
-      "Prisma",
-      "PostgreSQL",
-      "Google Cloud Run",
-      "Firebase",
-      "MongoDB",
-      "Jest",
-=======
       "React Native",
       "Node.js",
       "Google Cloud",
       "Firebase",
       "MongoDB",
       "Docker",
->>>>>>> master
     ],
   },
   {
     id: "pvamu",
-<<<<<<< HEAD
-    company: "Center for Information Technology Excellence",
-    title: "IT Software Applications Developer I",
-    location: "Prairie View, TX",
-    startDate: "November 2023",
-    endDate: "Present",
-    description:
-      "Developing and maintaining enterprise applications in a higher education environment, focusing on workflow automation, system integrations, and internal tooling. Managed enterprise-level user provisioning and access control across multiple platforms while ensuring FERPA compliance.",
-    contributions: [
-      "Designed and implemented automated workflow systems using DocuSign, reducing manual processing time by 60%",
-      "Built custom form logic and approval workflows for Banner ERP integration",
-      "Developed Laserfiche document management solutions for campus-wide records",
-      "Created internal tools for IT access requests and account provisioning",
-      "Developed automated workflow systems with dynamic form routing logic and SharePoint-based document management, implementing real-time tracking and version control for enterprise operations serving 10,000+ users",
-      "Managed enterprise-level user provisioning and access control across multiple platforms (Pathify, DocuSign, DynamicForms) while ensuring FERPA compliance and collaborating with department heads to integrate custom UI components",
-    ],
-    technologies: ["DocuSign", "SharePoint", "Banner ERP", "Laserfiche", "Pathify", "DynamicForms"],
-=======
     company: "Prairie View A&M University",
     title: "IT Software Applications Developer I",
     location: "On-site",
@@ -116,7 +70,6 @@ const experiences: Experience[] = [
       "Pathify",
       "Workflow Automation",
     ],
->>>>>>> master
   },
 ];
 

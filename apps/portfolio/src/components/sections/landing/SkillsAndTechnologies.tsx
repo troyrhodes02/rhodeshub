@@ -1,11 +1,5 @@
 "use client";
 
-<<<<<<< HEAD
-import { motion } from "framer-motion";
-import { Box, Container, Grid, Stack, Typography, Card, CardContent } from "@mui/material";
-import { Code2, Server, Database, Wrench, Zap } from "lucide-react";
-import { ElementType } from "react";
-=======
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
@@ -21,7 +15,6 @@ import {
 import { Code2, Server, Database, Wrench, Zap, ExternalLink } from "lucide-react";
 import { ElementType } from "react";
 import { getRelativeTime } from "@/utils/relativeTime";
->>>>>>> master
 
 interface SkillCategory {
   title: string;
@@ -176,8 +169,6 @@ function SkillCard({ category, index }: { category: SkillCategory; index: number
 }
 
 function NowBuildingCard() {
-<<<<<<< HEAD
-=======
   const [repoData, setRepoData] = useState<{
     description: string;
     html_url: string;
@@ -217,7 +208,6 @@ function NowBuildingCard() {
   const relativeTime = repoData?.pushed_at ? getRelativeTime(repoData.pushed_at) : null;
   const repoUrl = repoData?.html_url;
 
->>>>>>> master
   return (
     <MotionBox
       initial={{ opacity: 0, y: 20 }}
@@ -302,15 +292,9 @@ function NowBuildingCard() {
             </Box>
 
             {/* Content */}
-<<<<<<< HEAD
-            <Stack spacing={1}>
-              {/* Label */}
-              <Stack direction="row" spacing={1} alignItems="center">
-=======
             <Stack spacing={1} sx={{ flex: 1 }}>
               {/* Label */}
               <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
->>>>>>> master
                 <Typography
                   variant="overline"
                   sx={{
@@ -362,11 +346,6 @@ function NowBuildingCard() {
                   fontSize: { xs: "0.875rem", sm: "0.95rem" },
                 }}
               >
-<<<<<<< HEAD
-                A TypeScript-powered job intelligence tool that surfaces new React/Node roles and
-                helps prioritize applications with smart filtering and automated tracking.
-              </Typography>
-=======
                 {description}
               </Typography>
 
@@ -408,7 +387,6 @@ function NowBuildingCard() {
                   )}
                 </Stack>
               )}
->>>>>>> master
             </Stack>
           </Stack>
         </CardContent>

@@ -13,6 +13,7 @@ import {
   Button,
   Divider,
   useTheme,
+  IconButton,
 } from "@mui/material";
 import {
   LayoutDashboard,
@@ -20,11 +21,11 @@ import {
   Briefcase,
   Mail,
   FileText,
-  Settings,
   Plus,
   Home,
   Sun,
   Moon,
+  X,
 } from "lucide-react";
 import { useThemeMode } from "@/app/theme";
 
@@ -36,7 +37,6 @@ const navItems = [
   { label: "Job Applications", path: "/job-applications", icon: Briefcase },
   { label: "Job Inbox", path: "/job-inbox", icon: Mail },
   { label: "Resume Intel", path: "/resume-intelligence", icon: FileText },
-  { label: "Settings", path: "/settings", icon: Settings },
 ];
 
 // Get portfolio URL from env or fallback to localhost
@@ -44,42 +44,36 @@ const getPortfolioUrl = () => {
   return process.env.NEXT_PUBLIC_PORTFOLIO_URL || "http://localhost:3000";
 };
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
+
+export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
   const theme = useTheme();
   const { resolvedMode, toggleMode } = useThemeMode();
 
-  return (
-    <Drawer
-      variant="permanent"
+  const drawerContent = (
+    <Box
       sx={{
-        width: SIDEBAR_WIDTH,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: SIDEBAR_WIDTH,
-          boxSizing: "border-box",
-          borderRight: `1px solid ${theme.palette.divider}`,
-          backgroundColor: theme.palette.background.paper,
-        },
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
       }}
     >
+      {/* Header */}
       <Box
         sx={{
+          p: 3,
           display: "flex",
-          flexDirection: "column",
-          height: "100%",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 2,
+          borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
-        {/* Header */}
-        <Box
-          sx={{
-            p: 3,
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            borderBottom: `1px solid ${theme.palette.divider}`,
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           {/* W Avatar matching portfolio navbar style */}
           <Box
             sx={{
@@ -108,112 +102,169 @@ export default function Sidebar() {
             Admin Panel
           </Typography>
         </Box>
+        {/* Close button for mobile */}
+        <IconButton
+          onClick={onMobileClose}
+          sx={{
+            display: { xs: "flex", md: "none" },
+            color: theme.palette.text.secondary,
+          }}
+        >
+          <X size={20} />
+        </IconButton>
+      </Box>
 
-        {/* Navigation */}
-        <List sx={{ flex: 1, pt: 2 }}>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.path;
-            return (
-              <ListItemButton
-                key={item.path}
-                component={Link}
-                href={item.path}
-                selected={isActive}
-                sx={{
-                  mx: 1,
-                  mb: 0.5,
-                  borderRadius: 1,
-                  color: isActive ? theme.palette.text.primary : theme.palette.text.secondary,
+      {/* Navigation */}
+      <List sx={{ flex: 1, pt: 2 }}>
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.path;
+          return (
+            <ListItemButton
+              key={item.path}
+              component={Link}
+              href={item.path}
+              selected={isActive}
+              onClick={onMobileClose}
+              sx={{
+                mx: 1,
+                mb: 0.5,
+                borderRadius: 1,
+                color: isActive ? theme.palette.text.primary : theme.palette.text.secondary,
+                backgroundColor: isActive ? `${theme.palette.primary.main}1A` : "transparent",
+                border: isActive
+                  ? `1px solid ${theme.palette.primary.main}33`
+                  : "1px solid transparent",
+                "&:hover": {
+                  color: theme.palette.text.primary,
                   backgroundColor: isActive
                     ? `${theme.palette.primary.main}1A`
-                    : "transparent",
-                  border: isActive ? `1px solid ${theme.palette.primary.main}33` : "1px solid transparent",
+                    : `${theme.palette.action.hover}1A`,
+                },
+                "&.Mui-selected": {
+                  backgroundColor: `${theme.palette.primary.main}1A`,
+                  border: `1px solid ${theme.palette.primary.main}33`,
                   "&:hover": {
-                    color: theme.palette.text.primary,
-                    backgroundColor: isActive
-                      ? `${theme.palette.primary.main}1A`
-                      : `${theme.palette.action.hover}1A`,
-                  },
-                  "&.Mui-selected": {
                     backgroundColor: `${theme.palette.primary.main}1A`,
-                    border: `1px solid ${theme.palette.primary.main}33`,
-                    "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}1A`,
-                    },
                   },
+                },
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 40,
+                  color: isActive ? theme.palette.primary.main : theme.palette.text.secondary,
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 40,
-                    color: isActive ? theme.palette.primary.main : theme.palette.text.secondary,
-                  }}
-                >
-                  <Icon size={20} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{
-                    fontWeight: isActive ? 600 : 400,
-                    color: "inherit",
-                  }}
-                />
-              </ListItemButton>
-            );
-          })}
-        </List>
+                <Icon size={20} />
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{
+                  fontWeight: isActive ? 600 : 400,
+                  color: "inherit",
+                }}
+              />
+            </ListItemButton>
+          );
+        })}
+      </List>
 
-        <Divider />
+      <Divider />
 
-        {/* Bottom Actions */}
-        <Box sx={{ p: 2 }}>
-          <Button
-            fullWidth
-            variant="contained"
-            startIcon={<Plus size={20} />}
-            component={Link}
-            href="/projects"
-            sx={{
-              mb: 2,
-              textTransform: "none",
-            }}
-          >
-            Add Project
-          </Button>
-          <Button
-            fullWidth
-            component="a"
-            href={getPortfolioUrl()}
-            startIcon={<Home size={20} />}
-            sx={{
-              mb: 2,
-              textTransform: "none",
-              color: theme.palette.text.secondary,
-              border: `1px solid transparent`,
-              "&:hover": {
-                color: theme.palette.text.primary,
-                backgroundColor: `${theme.palette.action.hover}1A`,
-              },
-            }}
-          >
-            View Site
-          </Button>
-          <Button
-            onClick={toggleMode}
-            fullWidth
-            variant="outlined"
-            startIcon={resolvedMode === "light" ? <Moon size={20} /> : <Sun size={20} />}
-            sx={{
-              textTransform: "none",
-            }}
-            aria-label="Toggle theme"
-          >
-            {resolvedMode === "light" ? "Dark Mode" : "Light Mode"}
-          </Button>
-        </Box>
+      {/* Bottom Actions */}
+      <Box sx={{ p: 2 }}>
+        <Button
+          fullWidth
+          variant="contained"
+          startIcon={<Plus size={20} />}
+          component={Link}
+          href="/projects"
+          onClick={onMobileClose}
+          sx={{
+            mb: 2,
+            textTransform: "none",
+          }}
+        >
+          Add Project
+        </Button>
+        <Button
+          fullWidth
+          component="a"
+          href={getPortfolioUrl()}
+          startIcon={<Home size={20} />}
+          onClick={onMobileClose}
+          sx={{
+            mb: 2,
+            textTransform: "none",
+            color: theme.palette.text.secondary,
+            border: `1px solid transparent`,
+            "&:hover": {
+              color: theme.palette.text.primary,
+              backgroundColor: `${theme.palette.action.hover}1A`,
+            },
+          }}
+        >
+          View Site
+        </Button>
+        <Button
+          onClick={toggleMode}
+          fullWidth
+          variant="outlined"
+          startIcon={resolvedMode === "light" ? <Moon size={20} /> : <Sun size={20} />}
+          sx={{
+            textTransform: "none",
+          }}
+          aria-label="Toggle theme"
+        >
+          {resolvedMode === "light" ? "Dark Mode" : "Light Mode"}
+        </Button>
       </Box>
-    </Drawer>
+    </Box>
+  );
+
+  return (
+    <>
+      {/* Mobile drawer */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={onMobileClose}
+        ModalProps={{
+          keepMounted: true, // Better mobile performance
+        }}
+        sx={{
+          display: { xs: "block", md: "none" },
+          zIndex: (theme) => theme.zIndex.drawer,
+          "& .MuiDrawer-paper": {
+            width: SIDEBAR_WIDTH,
+            boxSizing: "border-box",
+            borderRight: `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme.palette.background.paper,
+            zIndex: (theme) => theme.zIndex.drawer,
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+      {/* Desktop drawer */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: "none", md: "block" },
+          width: SIDEBAR_WIDTH,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: SIDEBAR_WIDTH,
+            boxSizing: "border-box",
+            borderRight: `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme.palette.background.paper,
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+    </>
   );
 }
 
