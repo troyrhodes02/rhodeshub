@@ -27,3 +27,5 @@ The image will automatically be used when sharing links on:
 - Social media (Twitter, LinkedIn, Facebook)
 - Messaging apps (Discord, Slack, etc.)
 - Link previews in various platforms
+
+
