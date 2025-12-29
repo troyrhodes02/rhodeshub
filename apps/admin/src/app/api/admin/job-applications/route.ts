@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { JobApplicationStatus } from "@prisma/client";
 
-const VALID_STATUSES = Object.values(JobApplicationStatus);
+// Valid status values matching Prisma schema enum
+const VALID_STATUSES = ["APPLIED", "INTERVIEW", "REJECTED", "OFFER"] as const;
+type JobApplicationStatus = (typeof VALID_STATUSES)[number];
 
 interface CreateJobApplicationBody {
   company: string;
