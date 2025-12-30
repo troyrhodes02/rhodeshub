@@ -17,5 +17,3 @@ export function getRelativeTime(dateString: string): string {
     return "Updated just now";
   }
 }
-
-

@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["ADMIN_BASIC_AUTH_USER", "ADMIN_BASIC_AUTH_PASS", "DATABASE_URL", "DIRECT_URL"],
   "tasks": {
     "dev": {
       "cache": false

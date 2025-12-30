@@ -208,7 +208,7 @@ export default function Hero() {
                 >
                   <Button
                     component={Link}
-                    href="/pages/projects"
+                    href="/projects"
                     variant="contained"
                     size="large"
                     endIcon={<ArrowRight size={18} />}
