@@ -107,18 +107,19 @@ function SummaryCard({ label, value, color }: { label: string; value: number; co
   return (
     <Card
       sx={{
-        p: 2,
+        p: 1.5,
         border: `1px solid ${theme.palette.divider}`,
         bgcolor: theme.palette.background.paper,
       }}
     >
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.75, fontSize: "0.8rem" }}>
         {label}
       </Typography>
       <Typography
         variant="h4"
         sx={{
           fontWeight: 700,
+          fontSize: "1.5rem",
           color: color ? colorMap[color] : theme.palette.text.primary,
         }}
       >
@@ -153,8 +154,8 @@ function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
   return (
     <Card
       sx={{
-        p: 2,
-        mb: 2,
+        p: 1.75,
+        mb: 1.5,
         border: `1px solid ${theme.palette.divider}`,
         cursor: "pointer",
         "&:hover": {
@@ -163,23 +164,24 @@ function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
       }}
       onClick={() => router.push(`/job-applications/${job.id}`)}
     >
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+      <Box sx={{ display: "flex", gap: 1.5, mb: 1.5 }}>
         <Avatar
           sx={{
             bgcolor: `${theme.palette.primary.main}14`,
             color: theme.palette.primary.main,
             fontWeight: 700,
-            width: { xs: 40, sm: 48 },
-            height: { xs: 40, sm: 48 },
+            width: { xs: 34, sm: 40 },
+            height: { xs: 34, sm: 40 },
+            fontSize: "0.9rem",
           }}
         >
           {getInitials(job.company)}
         </Avatar>
         <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5, fontSize: "0.95rem" }}>
             {job.title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
             {job.company}
           </Typography>
         </Box>
@@ -190,27 +192,28 @@ function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
             bgcolor: statusColors.bg,
             color: statusColors.color,
             fontWeight: 500,
-            height: 24,
+            height: 22,
+            fontSize: "0.7rem",
           }}
         />
       </Box>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, mb: 2 }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.25, mb: 1.5 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <MapPin size={14} color={theme.palette.text.secondary} />
-          <Typography variant="caption" color="text.secondary">
+          <MapPin size={12} color={theme.palette.text.secondary} />
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
             {job.location}
           </Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <ExternalLink size={14} color={theme.palette.text.secondary} />
-          <Typography variant="caption" color="text.secondary">
+          <ExternalLink size={12} color={theme.palette.text.secondary} />
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
             {job.source}
           </Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <Calendar size={14} color={theme.palette.text.secondary} />
-          <Typography variant="caption" color="text.secondary">
+          <Calendar size={12} color={theme.palette.text.secondary} />
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
             {job.date}
           </Typography>
         </Box>
@@ -224,8 +227,8 @@ function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
               label={tech}
               size="small"
               sx={{
-                fontSize: "0.75rem",
-                height: 24,
+                fontSize: "0.7rem",
+                height: 22,
                 bgcolor: theme.palette.background.default,
                 border: `1px solid ${theme.palette.divider}`,
               }}
@@ -236,8 +239,8 @@ function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
               label={`+${job.techStack.length - 4}`}
               size="small"
               sx={{
-                fontSize: "0.75rem",
-                height: 24,
+                fontSize: "0.7rem",
+                height: 22,
                 bgcolor: theme.palette.background.default,
               }}
             />
@@ -290,8 +293,8 @@ export default function JobApplicationsPage() {
           flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
           alignItems: { xs: "flex-start", sm: "center" },
-          gap: 2,
-          mb: { xs: 3, md: 4 },
+          gap: 1.5,
+          mb: { xs: 2.5, md: 3 },
         }}
       >
         <Box>
@@ -299,20 +302,20 @@ export default function JobApplicationsPage() {
             variant="h4"
             sx={{
               fontWeight: 700,
-              fontSize: { xs: "1.5rem", sm: "2rem" },
+              fontSize: { xs: "1.3rem", sm: "1.7rem" },
             }}
           >
             Job Applications
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
             Track and manage your job applications
           </Typography>
         </Box>
         <Button
           variant="contained"
-          startIcon={<Plus size={20} />}
+          startIcon={<Plus size={18} />}
           onClick={() => router.push("/job-applications/add")}
-          sx={{ textTransform: "none" }}
+          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
         >
           Add Job
         </Button>
@@ -323,8 +326,8 @@ export default function JobApplicationsPage() {
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, 1fr)" },
-          gap: 2,
-          mb: 3,
+          gap: 1.5,
+          mb: 2.5,
         }}
       >
         <SummaryCard label="Total Jobs" value={summaryStats.total} />
@@ -338,8 +341,8 @@ export default function JobApplicationsPage() {
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
-          gap: 2,
-          mb: 3,
+          gap: 1.5,
+          mb: 2.5,
         }}
       >
         <TextField
@@ -356,7 +359,7 @@ export default function JobApplicationsPage() {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Search size={18} color={theme.palette.text.secondary} />
+                <Search size={16} color={theme.palette.text.secondary} />
               </InputAdornment>
             ),
           }}
@@ -407,7 +410,7 @@ export default function JobApplicationsPage() {
               <Card
                 key={job.id}
                 sx={{
-                  p: 2,
+                  p: 1.75,
                   border: `1px solid ${theme.palette.divider}`,
                   cursor: "pointer",
                   "&:hover": {
@@ -416,55 +419,75 @@ export default function JobApplicationsPage() {
                 }}
                 onClick={() => router.push(`/job-applications/${job.id}`)}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                   <Avatar
                     sx={{
                       bgcolor: `${theme.palette.primary.main}14`,
                       color: theme.palette.primary.main,
                       fontWeight: 700,
-                      width: 48,
-                      height: 48,
+                      width: 40,
+                      height: 40,
+                      fontSize: "0.9rem",
                     }}
                   >
                     {getInitials(job.company)}
                   </Avatar>
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: 600, mb: 0.5, fontSize: "0.95rem" }}
+                    >
                       {job.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 0.75, fontSize: "0.8rem" }}
+                    >
                       {job.company}
                     </Typography>
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.25 }}>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <MapPin size={14} color={theme.palette.text.secondary} />
-                        <Typography variant="caption" color="text.secondary">
+                        <MapPin size={12} color={theme.palette.text.secondary} />
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontSize: "0.7rem" }}
+                        >
                           {job.location}
                         </Typography>
                       </Box>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <ExternalLink size={14} color={theme.palette.text.secondary} />
-                        <Typography variant="caption" color="text.secondary">
+                        <ExternalLink size={12} color={theme.palette.text.secondary} />
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontSize: "0.7rem" }}
+                        >
                           {job.source}
                         </Typography>
                       </Box>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <Calendar size={14} color={theme.palette.text.secondary} />
-                        <Typography variant="caption" color="text.secondary">
+                        <Calendar size={12} color={theme.palette.text.secondary} />
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontSize: "0.7rem" }}
+                        >
                           {job.date}
                         </Typography>
                       </Box>
                     </Box>
                     {job.techStack.length > 0 && (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.75 }}>
                         {job.techStack.slice(0, 4).map((tech) => (
                           <Chip
                             key={tech}
                             label={tech}
                             size="small"
                             sx={{
-                              fontSize: "0.75rem",
-                              height: 24,
+                              fontSize: "0.7rem",
+                              height: 22,
                               bgcolor: theme.palette.background.default,
                               border: `1px solid ${theme.palette.divider}`,
                             }}
@@ -475,8 +498,8 @@ export default function JobApplicationsPage() {
                             label={`+${job.techStack.length - 4}`}
                             size="small"
                             sx={{
-                              fontSize: "0.75rem",
-                              height: 24,
+                              fontSize: "0.7rem",
+                              height: 22,
                               bgcolor: theme.palette.background.default,
                             }}
                           />
@@ -484,7 +507,7 @@ export default function JobApplicationsPage() {
                       </Box>
                     )}
                   </Box>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Chip
                       label={job.status}
                       size="small"
@@ -492,13 +515,14 @@ export default function JobApplicationsPage() {
                         bgcolor: statusColors.bg,
                         color: statusColors.color,
                         fontWeight: 500,
-                        height: 28,
+                        height: 26,
+                        fontSize: "0.75rem",
                       }}
                     />
                     <Button
                       variant="outlined"
                       size="small"
-                      sx={{ textTransform: "none" }}
+                      sx={{ textTransform: "none", fontSize: "0.8rem", py: 0.5 }}
                       onClick={(e) => {
                         e.stopPropagation();
                         router.push(`/job-applications/${job.id}`);
@@ -513,7 +537,7 @@ export default function JobApplicationsPage() {
                         // Handle menu
                       }}
                     >
-                      <MoreVertical size={18} />
+                      <MoreVertical size={16} />
                     </IconButton>
                   </Box>
                 </Box>

@@ -98,8 +98,8 @@ function Stepper({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        gap: { xs: 1, sm: 2 },
-        mb: 4,
+        gap: { xs: 0.75, sm: 1.5 },
+        mb: 3,
       }}
     >
       {steps.map((step, index) => {
@@ -111,8 +111,8 @@ function Stepper({
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <Box
                 sx={{
-                  width: { xs: 32, sm: 40 },
-                  height: { xs: 32, sm: 40 },
+                  width: { xs: 28, sm: 34 },
+                  height: { xs: 28, sm: 34 },
                   borderRadius: "50%",
                   display: "flex",
                   alignItems: "center",
@@ -132,7 +132,7 @@ function Stepper({
                   fontSize: { xs: "0.875rem", sm: "1rem" },
                 }}
               >
-                {isCompleted ? <Check size={18} /> : step.id}
+                {isCompleted ? <Check size={16} /> : step.id}
               </Box>
               <Typography
                 variant="caption"
@@ -149,7 +149,7 @@ function Stepper({
             {index < steps.length - 1 && (
               <Box
                 sx={{
-                  width: { xs: 40, sm: 80, md: 120 },
+                  width: { xs: 32, sm: 68, md: 100 },
                   height: 2,
                   bgcolor: completedSteps.includes(step.id)
                     ? theme.palette.primary.main
@@ -178,15 +178,15 @@ function BasicInfoStep({
 
   return (
     <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, fontSize: "1rem" }}>
           Basic Info
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.85rem" }}>
           Project title and description
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           <TextField
             label="Project Title"
             placeholder="e.g., FreightFi"
@@ -255,15 +255,15 @@ function DetailsStep({
 
   return (
     <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, fontSize: "1rem" }}>
           Details
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.85rem" }}>
           Problem statement and tech stack
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           <TextField
             label="Problem Statement"
             placeholder="What problem does this project solve?"
@@ -275,10 +275,10 @@ function DetailsStep({
           />
 
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.25, fontSize: "0.85rem" }}>
               Tech Stack
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
               {techStackOptions.map((tech) => (
                 <Chip
                   key={tech}
@@ -309,10 +309,10 @@ function DetailsStep({
           </Box>
 
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.25, fontSize: "0.85rem" }}>
               Key Achievements (up to 3)
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
               {formData.achievements.map((achievement, index) => (
                 <TextField
                   key={index}
@@ -342,25 +342,25 @@ function MediaStep({
 
   return (
     <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, fontSize: "1rem" }}>
           Media
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.85rem" }}>
           Images and links
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           {/* Image Upload Area */}
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.25, fontSize: "0.85rem" }}>
               Project Image
             </Typography>
             <Box
               sx={{
                 border: `2px dashed ${theme.palette.secondary.main}`,
-                borderRadius: 2,
-                p: 4,
+                borderRadius: 1.5,
+                p: 3,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -372,17 +372,23 @@ function MediaStep({
                 },
               }}
             >
-              <Upload size={32} color={theme.palette.text.secondary} />
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              <Upload size={28} color={theme.palette.text.secondary} />
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mt: 1.5, fontSize: "0.85rem" }}
+              >
                 Click to upload or drag and drop
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                 PNG, JPG up to 5MB
               </Typography>
             </Box>
           </Box>
 
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
+          <Box
+            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}
+          >
             <TextField
               label="GitHub URL"
               placeholder="https://github.com/..."
@@ -577,16 +583,16 @@ function ReviewStep({
 
   return (
     <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, fontSize: "1rem" }}>
           Review
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.85rem" }}>
           AI-generated summary
         </Typography>
 
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, fontSize: "0.9rem" }}>
             Summary
           </Typography>
           <Box
@@ -710,10 +716,11 @@ export default function AddProjectPage() {
       <Button
         component={Link}
         href="/projects"
-        startIcon={<ChevronLeft size={18} />}
+        startIcon={<ChevronLeft size={16} />}
         sx={{
-          mb: 2,
+          mb: 1.5,
           textTransform: "none",
+          fontSize: "0.875rem",
           color: theme.palette.primary.main,
         }}
       >
@@ -725,13 +732,13 @@ export default function AddProjectPage() {
         variant="h4"
         sx={{
           fontWeight: 700,
-          mb: 1,
-          fontSize: { xs: "1.5rem", sm: "2rem" },
+          mb: 0.75,
+          fontSize: { xs: "1.3rem", sm: "1.7rem" },
         }}
       >
         Add New Project
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontSize: "0.85rem" }}>
         Create a new project for your portfolio.
       </Typography>
 
@@ -746,37 +753,39 @@ export default function AddProjectPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          mt: 3,
+          mt: 2.5,
           flexDirection: { xs: "column-reverse", sm: "row" },
-          gap: 2,
+          gap: 1.5,
         }}
       >
         <Button
           variant="outlined"
-          startIcon={<ChevronLeft size={18} />}
+          startIcon={<ChevronLeft size={16} />}
           onClick={handleBack}
           disabled={currentStep === 1 && !showAiSummary}
-          sx={{ textTransform: "none" }}
+          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
         >
           {showAiSummary ? "Edit Details" : "Back"}
         </Button>
 
         {currentStep === 4 ? (
           showAiSummary ? (
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ display: "flex", gap: 1.5 }}>
               <Button
                 variant="outlined"
                 onClick={() => router.push("/projects")}
-                sx={{ textTransform: "none" }}
+                sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
               >
                 Cancel
               </Button>
               <Button
                 variant="contained"
-                startIcon={<Check size={18} />}
+                startIcon={<Check size={16} />}
                 onClick={handleApprove}
                 sx={{
                   textTransform: "none",
+                  fontSize: "0.875rem",
+                  py: 0.75,
                   bgcolor: theme.palette.secondary.main,
                   "&:hover": {
                     bgcolor: theme.palette.secondary.dark,
@@ -789,9 +798,9 @@ export default function AddProjectPage() {
           ) : (
             <Button
               variant="contained"
-              startIcon={<Sparkles size={18} />}
+              startIcon={<Sparkles size={16} />}
               onClick={handleGenerateAi}
-              sx={{ textTransform: "none" }}
+              sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
             >
               Generate AI Summary
             </Button>
@@ -799,9 +808,9 @@ export default function AddProjectPage() {
         ) : (
           <Button
             variant="contained"
-            endIcon={<ChevronRight size={18} />}
+            endIcon={<ChevronRight size={16} />}
             onClick={handleNext}
-            sx={{ textTransform: "none" }}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
           >
             Next
           </Button>
