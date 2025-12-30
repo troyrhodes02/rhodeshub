@@ -206,18 +206,19 @@ function SummaryCard({
   return (
     <Card
       sx={{
-        p: 2,
+        p: 1.5,
         border: `1px solid ${theme.palette.divider}`,
         bgcolor: theme.palette.background.paper,
       }}
     >
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.75, fontSize: "0.8rem" }}>
         {label}
       </Typography>
       <Typography
         variant="h4"
         sx={{
           fontWeight: 700,
+          fontSize: "1.5rem",
           color: color ? colorMap[color] : theme.palette.text.primary,
         }}
       >
@@ -261,15 +262,15 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
           },
         }}
       >
-        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <CardContent sx={{ p: { xs: 1.5, sm: 2.5 } }}>
           {/* Header Row */}
           <Box
             sx={{
               display: "flex",
               flexWrap: "wrap",
               alignItems: "center",
-              gap: 1,
-              mb: 2,
+              gap: 0.75,
+              mb: 1.5,
             }}
           >
             <Chip
@@ -279,38 +280,45 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
                 bgcolor: typeColors.bg,
                 color: typeColors.color,
                 fontWeight: 500,
-                height: 24,
+                height: 22,
+                fontSize: "0.7rem",
               }}
             />
             <Chip
-              icon={<LinkIcon size={14} />}
+              icon={<LinkIcon size={12} />}
               label={email.company}
               size="small"
               sx={{
+                fontSize: "0.7rem",
+                height: 22,
                 bgcolor: theme.palette.background.default,
                 border: `1px solid ${theme.palette.divider}`,
               }}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ ml: "auto" }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ ml: "auto", fontSize: "0.7rem" }}
+            >
               {email.date}
             </Typography>
-            <Box sx={{ ml: { xs: 0, sm: 1 }, color: theme.palette.text.secondary }}>
-              {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            <Box sx={{ ml: { xs: 0, sm: 0.75 }, color: theme.palette.text.secondary }}>
+              {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </Box>
           </Box>
 
           {/* Subject */}
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.75, fontSize: "0.95rem" }}>
             {email.subject}
           </Typography>
 
           {/* From */}
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.75, fontSize: "0.8rem" }}>
             From: {email.from}
           </Typography>
 
           {/* Preview */}
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
             {email.preview}
           </Typography>
         </CardContent>
@@ -326,7 +334,7 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
             borderRadius: 1,
           }}
         >
-          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+          <CardContent sx={{ p: { xs: 1.5, sm: 2.5 } }}>
             <Box
               sx={{
                 display: "grid",
@@ -480,8 +488,8 @@ export default function JobInboxPage() {
           flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
           alignItems: { xs: "flex-start", sm: "center" },
-          gap: 2,
-          mb: { xs: 3, md: 4 },
+          gap: 1.5,
+          mb: { xs: 2.5, md: 3 },
         }}
       >
         <Box>
@@ -489,20 +497,20 @@ export default function JobInboxPage() {
             variant="h4"
             sx={{
               fontWeight: 700,
-              fontSize: { xs: "1.5rem", sm: "2rem" },
+              fontSize: { xs: "1.3rem", sm: "1.7rem" },
             }}
           >
             Job Email Inbox
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
             View and classify job-related emails
           </Typography>
         </Box>
         <Button
           variant="outlined"
-          startIcon={<Settings size={20} />}
+          startIcon={<Settings size={18} />}
           onClick={() => setSettingsOpen(true)}
-          sx={{ textTransform: "none" }}
+          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
         >
           Settings
         </Button>
@@ -513,8 +521,8 @@ export default function JobInboxPage() {
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(5, 1fr)" },
-          gap: 2,
-          mb: 3,
+          gap: 1.5,
+          mb: 2.5,
         }}
       >
         <SummaryCard label="Total Emails" value={summaryStats.total} />
@@ -525,8 +533,8 @@ export default function JobInboxPage() {
       </Box>
 
       {/* Search and Filter */}
-      <Card sx={{ border: `1px solid ${theme.palette.divider}`, mb: 3 }}>
-        <CardContent sx={{ p: 2 }}>
+      <Card sx={{ border: `1px solid ${theme.palette.divider}`, mb: 2.5 }}>
+        <CardContent sx={{ p: 1.5 }}>
           <Box
             sx={{
               display: "flex",
@@ -549,7 +557,7 @@ export default function JobInboxPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search size={18} color={theme.palette.text.secondary} />
+                    <Search size={16} color={theme.palette.text.secondary} />
                   </InputAdornment>
                 ),
               }}

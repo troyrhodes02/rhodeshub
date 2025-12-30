@@ -16,6 +16,9 @@ import {
   InputLabel,
   Chip,
   useTheme,
+  Snackbar,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import {
   ChevronLeft,
@@ -105,8 +108,8 @@ function Stepper({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        gap: { xs: 1, sm: 2 },
-        mb: 4,
+        gap: { xs: 0.75, sm: 1.5 },
+        mb: 3,
       }}
     >
       {steps.map((step, index) => {
@@ -119,8 +122,8 @@ function Stepper({
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <Box
                 sx={{
-                  width: { xs: 32, sm: 40 },
-                  height: { xs: 32, sm: 40 },
+                  width: { xs: 28, sm: 34 },
+                  height: { xs: 28, sm: 34 },
                   borderRadius: "50%",
                   display: "flex",
                   alignItems: "center",
@@ -138,12 +141,13 @@ function Stepper({
                       : theme.palette.text.secondary,
                 }}
               >
-                {isCompleted ? <Check size={18} /> : <Icon size={18} />}
+                {isCompleted ? <Check size={16} /> : <Icon size={16} />}
               </Box>
               <Typography
                 variant="caption"
                 sx={{
-                  mt: 1,
+                  mt: 0.75,
+                  fontSize: "0.75rem",
                   color: isActive ? theme.palette.text.primary : theme.palette.text.secondary,
                   fontWeight: isActive ? 600 : 400,
                   display: { xs: "none", sm: "block" },
@@ -155,13 +159,13 @@ function Stepper({
             {index < steps.length - 1 && (
               <Box
                 sx={{
-                  width: { xs: 40, sm: 80, md: 120 },
+                  width: { xs: 32, sm: 68, md: 100 },
                   height: 2,
                   bgcolor: completedSteps.includes(step.id)
                     ? theme.palette.primary.main
                     : theme.palette.divider,
-                  mx: { xs: 0.5, sm: 1 },
-                  mt: { xs: 0, sm: -3 },
+                  mx: { xs: 0.5, sm: 0.75 },
+                  mt: { xs: 0, sm: -2.5 },
                 }}
               />
             )}
@@ -184,38 +188,97 @@ function PasteJobStep({
 
   return (
     <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 0.5 }}>
-          <LinkIcon size={20} color={theme.palette.text.secondary} />
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 0.5 }}>
+          <LinkIcon size={18} color={theme.palette.text.secondary} />
+          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1rem" }}>
             Paste Job Listing
           </Typography>
         </Box>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.85rem" }}>
           Provide the job URL and description. AI will extract all the details for you.
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          <TextField
-            label="Job URL (optional)"
-            placeholder="https://..."
-            fullWidth
-            value={formData.jobUrl}
-            onChange={(e) => setFormData({ ...formData, jobUrl: e.target.value })}
-          />
-          <TextField
-            label="Job Description *"
-            placeholder="Paste the full job description here..."
-            fullWidth
-            multiline
-            rows={8}
-            value={formData.jobDescription}
-            onChange={(e) => setFormData({ ...formData, jobDescription: e.target.value })}
-            required
-          />
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+          <Box>
+            <FieldLabel label="Job URL" />
+            <TextField
+              placeholder="e.g., https://stripe.com/jobs/senior-frontend-engineer"
+              fullWidth
+              value={formData.jobUrl}
+              onChange={(e) => setFormData({ ...formData, jobUrl: e.target.value })}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                  height: "40px",
+                  "& fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&:hover fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: theme.palette.primary.main,
+                  },
+                },
+                "& .MuiOutlinedInput-input": {
+                  py: 1,
+                },
+              }}
+            />
+          </Box>
+          <Box>
+            <FieldLabel label="Job Description" required />
+            <TextField
+              placeholder="e.g., Paste the full job description here..."
+              fullWidth
+              multiline
+              rows={8}
+              value={formData.jobDescription}
+              onChange={(e) => setFormData({ ...formData, jobDescription: e.target.value })}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                  "& fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&:hover fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: theme.palette.primary.main,
+                  },
+                },
+              }}
+            />
+          </Box>
         </Box>
       </CardContent>
     </Card>
+  );
+}
+
+// Label component with optional asterisk
+function FieldLabel({ label, required }: { label: string; required?: boolean }) {
+  return (
+    <Typography
+      variant="body2"
+      sx={{
+        fontWeight: 500,
+        mb: 0.75,
+        fontSize: "0.875rem",
+        color: "text.primary",
+      }}
+    >
+      {label}
+      {required && (
+        <Box component="span" sx={{ color: "error.main", ml: 0.25 }}>
+          *
+        </Box>
+      )}
+    </Typography>
   );
 }
 
@@ -223,9 +286,11 @@ function PasteJobStep({
 function ParseDetailsStep({
   formData,
   setFormData,
+  entryMode,
 }: {
   formData: JobFormData;
   setFormData: (data: JobFormData) => void;
+  entryMode: "ai" | "manual" | null;
 }) {
   const theme = useTheme();
 
@@ -266,27 +331,38 @@ function ParseDetailsStep({
 
   return (
     <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 0.5 }}>
-          <Sparkles size={20} color={theme.palette.primary.main} />
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            AI-Parsed Details
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 0.5 }}>
+          {entryMode === "ai" ? (
+            <Sparkles size={18} color={theme.palette.primary.main} />
+          ) : (
+            <Pencil size={18} color={theme.palette.primary.main} />
+          )}
+          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1rem" }}>
+            {entryMode === "ai" ? "AI Parsed Details" : "Enter Job Details"}
           </Typography>
-          <Chip
-            label="Editable"
-            size="small"
-            sx={{
-              bgcolor: `${theme.palette.primary.main}14`,
-              color: theme.palette.primary.main,
-              fontWeight: 500,
-            }}
-          />
+          {entryMode === "ai" && (
+            <Chip
+              label="Editable"
+              size="small"
+              sx={{
+                bgcolor: `${theme.palette.primary.main}14`,
+                color: theme.palette.primary.main,
+                fontWeight: 500,
+                fontSize: "0.7rem",
+                height: 22,
+              }}
+            />
+          )}
         </Box>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Review and edit the extracted information as needed.
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.85rem" }}>
+          {entryMode === "ai"
+            ? "Review and edit the extracted information as needed."
+            : "Fill in the job details manually."}
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+          {/* Row 1: Job Title | Company */}
           <Box
             sx={{
               display: "grid",
@@ -294,81 +370,299 @@ function ParseDetailsStep({
               gap: 2,
             }}
           >
-            <TextField
-              label="Job Title *"
-              fullWidth
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              required
-            />
-            <TextField
-              label="Company *"
-              fullWidth
-              value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              required
-            />
-            <TextField
-              label="Location"
-              fullWidth
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-            />
+            {/* Job Title */}
+            <Box>
+              <FieldLabel label="Job Title" required />
+              <TextField
+                fullWidth
+                placeholder="e.g., Senior Frontend Engineer"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "40px",
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    py: 1,
+                  },
+                }}
+              />
+            </Box>
+
+            {/* Company */}
+            <Box>
+              <FieldLabel label="Company" required />
+              <TextField
+                fullWidth
+                placeholder="e.g., Stripe"
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "40px",
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    py: 1,
+                  },
+                }}
+              />
+            </Box>
+          </Box>
+
+          {/* Row 2: Location | Job Link */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            {/* Location */}
+            <Box>
+              <FieldLabel label="Location" />
+              <TextField
+                fullWidth
+                placeholder="e.g., Remote (US)"
+                value={formData.location}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "40px",
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    py: 1,
+                  },
+                }}
+              />
+            </Box>
+
+            {/* Job Link */}
+            <Box>
+              <FieldLabel label="Job Link" required />
+              <TextField
+                fullWidth
+                placeholder="e.g., https://stripe.com/jobs/senior-frontend-engineer"
+                value={formData.jobUrl}
+                onChange={(e) => setFormData({ ...formData, jobUrl: e.target.value })}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "40px",
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    py: 1,
+                  },
+                }}
+              />
+            </Box>
+          </Box>
+
+          {/* Row 3: Source (full width) */}
+          <Box>
+            <FieldLabel label="Source" />
             <FormControl fullWidth>
-              <InputLabel>Source</InputLabel>
               <Select
-                label="Source"
                 value={formData.source}
                 onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                displayEmpty
+                sx={{
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                  height: "40px",
+                  "& .MuiSelect-select": {
+                    py: 1,
+                    display: "flex",
+                    alignItems: "center",
+                  },
+                  "& fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&:hover fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: theme.palette.primary.main,
+                  },
+                }}
               >
+                <MenuItem value="" disabled>
+                  Select source
+                </MenuItem>
                 <MenuItem value="LinkedIn">LinkedIn</MenuItem>
+                <MenuItem value="BuiltIn">BuiltIn</MenuItem>
                 <MenuItem value="Company Site">Company Site</MenuItem>
-                <MenuItem value="Builtin">Builtin</MenuItem>
+                <MenuItem value="Referral">Referral</MenuItem>
                 <MenuItem value="Other">Other</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Seniority Level</InputLabel>
-              <Select
-                label="Seniority Level"
-                value={formData.seniority}
-                onChange={(e) => setFormData({ ...formData, seniority: e.target.value })}
-              >
-                <MenuItem value="Junior">Junior</MenuItem>
-                <MenuItem value="Mid">Mid</MenuItem>
-                <MenuItem value="Senior">Senior</MenuItem>
-                <MenuItem value="Lead">Lead</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Employment Type</InputLabel>
-              <Select
-                label="Employment Type"
-                value={formData.employmentType}
-                onChange={(e) => setFormData({ ...formData, employmentType: e.target.value })}
-              >
-                <MenuItem value="Full-time">Full-time</MenuItem>
-                <MenuItem value="Part-time">Part-time</MenuItem>
-                <MenuItem value="Contract">Contract</MenuItem>
-                <MenuItem value="Internship">Internship</MenuItem>
               </Select>
             </FormControl>
           </Box>
 
-          <TextField
-            label="Role Summary"
-            fullWidth
-            multiline
-            rows={4}
-            value={formData.roleSummary}
-            onChange={(e) => setFormData({ ...formData, roleSummary: e.target.value })}
-          />
+          {/* Row 4: Seniority Level | Employment Type */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            {/* Seniority Level */}
+            <Box>
+              <FieldLabel label="Seniority Level" />
+              <FormControl fullWidth>
+                <Select
+                  value={formData.seniority}
+                  onChange={(e) => setFormData({ ...formData, seniority: e.target.value })}
+                  displayEmpty
+                  sx={{
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "40px",
+                    "& .MuiSelect-select": {
+                      py: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    },
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    Select level
+                  </MenuItem>
+                  <MenuItem value="Entry-Level">Entry-Level</MenuItem>
+                  <MenuItem value="Associate">Associate</MenuItem>
+                  <MenuItem value="Mid">Mid</MenuItem>
+                  <MenuItem value="Senior">Senior</MenuItem>
+                  <MenuItem value="Staff">Staff</MenuItem>
+                  <MenuItem value="Lead">Lead</MenuItem>
+                  <MenuItem value="Manager">Manager</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            {/* Employment Type */}
+            <Box>
+              <FieldLabel label="Employment Type" />
+              <FormControl fullWidth>
+                <Select
+                  value={formData.employmentType}
+                  onChange={(e) => setFormData({ ...formData, employmentType: e.target.value })}
+                  displayEmpty
+                  sx={{
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "40px",
+                    "& .MuiSelect-select": {
+                      py: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    },
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    Select type
+                  </MenuItem>
+                  <MenuItem value="Full-time">Full-time</MenuItem>
+                  <MenuItem value="Part-time">Part-time</MenuItem>
+                  <MenuItem value="Contract">Contract</MenuItem>
+                  <MenuItem value="Internship">Internship</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
+
+          {/* Role Summary - Full Width */}
+          <Box>
+            <FieldLabel label="Role Summary" />
+            <TextField
+              fullWidth
+              placeholder="e.g., Brief summary of the role..."
+              multiline
+              rows={4}
+              value={formData.roleSummary}
+              onChange={(e) => setFormData({ ...formData, roleSummary: e.target.value })}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                  "& fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&:hover fieldset": {
+                    borderColor: theme.palette.divider,
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: theme.palette.primary.main,
+                  },
+                },
+              }}
+            />
+          </Box>
 
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.25, fontSize: "0.85rem" }}>
               Tech Stack
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, mb: 1.5 }}>
               {formData.techStack.map((tech) => (
                 <Chip
                   key={tech}
@@ -383,7 +677,7 @@ function ParseDetailsStep({
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
               <TextField
-                placeholder="Add technology..."
+                placeholder="e.g., React"
                 size="small"
                 value={newTech}
                 onChange={(e) => setNewTech(e.target.value)}
@@ -393,7 +687,17 @@ function ParseDetailsStep({
                     setNewTech("");
                   }
                 }}
-                sx={{ flex: 1 }}
+                sx={{
+                  flex: 1,
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "36px",
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                  },
+                }}
               />
               <Button
                 variant="outlined"
@@ -430,10 +734,10 @@ function ParseDetailsStep({
           </Box>
 
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.25, fontSize: "0.85rem" }}>
               Skills
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, mb: 1.5 }}>
               {formData.skills.map((skill) => (
                 <Chip
                   key={skill}
@@ -448,7 +752,7 @@ function ParseDetailsStep({
             </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
               <TextField
-                placeholder="Add skill..."
+                placeholder="e.g., Frontend Development"
                 size="small"
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
@@ -458,7 +762,17 @@ function ParseDetailsStep({
                     setNewSkill("");
                   }
                 }}
-                sx={{ flex: 1 }}
+                sx={{
+                  flex: 1,
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                    height: "36px",
+                    "& fieldset": {
+                      borderColor: theme.palette.divider,
+                    },
+                  },
+                }}
               />
               <Button
                 variant="outlined"
@@ -510,15 +824,15 @@ function ReviewStep({ formData }: { formData: JobFormData }) {
 
   return (
     <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, fontSize: "1rem" }}>
           Review & Save
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.85rem" }}>
           Review all details before saving
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
               Job Details
@@ -655,17 +969,51 @@ export default function AddJobApplicationPage() {
   const [formData, setFormData] = useState<JobFormData>(initialFormData);
   const [parseMode, setParseMode] = useState<"ai" | "manual" | null>(null);
 
-  const handleNext = () => {
-    if (currentStep === 1 && !parseMode) {
-      // Show parse mode selection
+  // New states for behavior
+  const [isParsing, setIsParsing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error" | "warning" | "info";
+  }>({ open: false, message: "", severity: "info" });
+
+  const showSnackbar = (
+    message: string,
+    severity: "success" | "error" | "warning" | "info" = "info"
+  ) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  // Handle AI Parse card click
+  const handleAiParseClick = () => {
+    if (!formData.jobDescription.trim()) {
+      showSnackbar("Please paste a job description first", "warning");
       return;
     }
-    if (currentStep === 1 && parseMode === "ai") {
-      // Auto-fill form data (mock)
-      setFormData({
-        ...formData,
+
+    setParseMode("ai");
+    setIsParsing(true);
+
+    // Mark step 1 as completed and advance to step 2
+    if (!completedSteps.includes(1)) {
+      setCompletedSteps([...completedSteps, 1]);
+    }
+    setCurrentStep(2);
+
+    // Simulate AI parsing with delay (600-1200ms)
+    const delay = 600 + Math.random() * 600;
+    setTimeout(() => {
+      // Auto-fill form data with mock parsed values
+      setFormData((prev) => ({
+        ...prev,
         title: "Senior Frontend Engineer",
         company: "Stripe",
+        jobUrl: prev.jobUrl || "https://stripe.com/jobs/senior-frontend-engineer",
         location: "Remote (US)",
         source: "LinkedIn",
         seniority: "Senior",
@@ -680,7 +1028,25 @@ export default function AddJobApplicationPage() {
           "Team Collaboration",
           "Agile/Scrum",
         ],
-      });
+      }));
+      setIsParsing(false);
+    }, delay);
+  };
+
+  // Handle Manual Entry card click
+  const handleManualEntryClick = () => {
+    setParseMode("manual");
+    // Mark step 1 as completed and advance to step 2
+    if (!completedSteps.includes(1)) {
+      setCompletedSteps([...completedSteps, 1]);
+    }
+    setCurrentStep(2);
+  };
+
+  const handleNext = () => {
+    if (currentStep === 1 && !parseMode) {
+      // Show parse mode selection
+      return;
     }
     if (!completedSteps.includes(currentStep)) {
       setCompletedSteps([...completedSteps, currentStep]);
@@ -691,16 +1057,69 @@ export default function AddJobApplicationPage() {
   };
 
   const handleBack = () => {
-    if (currentStep === 2 && parseMode === "ai") {
+    if (currentStep === 2) {
+      // Going back from step 2 to step 1, reset parseMode
       setParseMode(null);
+      setCurrentStep(1);
+      // Remove step 1 from completed steps so mode selection shows again
+      setCompletedSteps(completedSteps.filter((s) => s !== 1));
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
 
-  const handleSave = () => {
-    // Would save to database
-    router.push("/job-applications");
+  const handleSave = async () => {
+    // Validate required fields for persistence
+    const company = formData.company.trim();
+    const role = formData.title.trim(); // UI uses 'title' but API expects 'role'
+    const link = formData.jobUrl.trim() || ""; // Use jobUrl
+    const dateApplied = new Date().toISOString(); // Default to now
+    const status = "APPLIED"; // Default status
+
+    if (!company) {
+      showSnackbar("Company is required", "error");
+      return;
+    }
+    if (!role) {
+      showSnackbar("Job Title is required", "error");
+      return;
+    }
+    if (!link) {
+      showSnackbar("Job Link is required", "error");
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const response = await fetch("/api/admin/job-applications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company,
+          role,
+          link,
+          dateApplied,
+          status,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showSnackbar(data.error || "Failed to save job application", "error");
+        setIsSaving(false);
+        return;
+      }
+
+      // Success - navigate to list page
+      router.push("/job-applications");
+    } catch (error) {
+      showSnackbar("Failed to save job application", "error");
+      setIsSaving(false);
+    }
   };
 
   const renderStep = () => {
@@ -712,79 +1131,79 @@ export default function AddJobApplicationPage() {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-              gap: 2,
-              mt: 3,
+              gap: 1.5,
+              mt: 2.5,
             }}
           >
             <Card
               sx={{
-                p: 3,
+                p: 2.5,
                 border: `1px solid ${theme.palette.divider}`,
                 cursor: "pointer",
                 "&:hover": {
                   borderColor: theme.palette.primary.main,
                 },
               }}
-              onClick={() => {
-                setParseMode("ai");
-                handleNext();
-              }}
+              onClick={handleAiParseClick}
             >
               <Box
                 sx={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 2,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 1.5,
                   bgcolor: `${theme.palette.primary.main}14`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: theme.palette.primary.main,
-                  mb: 2,
+                  mb: 1.5,
                 }}
               >
-                <Sparkles size={24} />
+                <Sparkles size={20} />
               </Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 600, mb: 0.75, fontSize: "0.95rem" }}
+              >
                 AI Parse
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
                 Automatically extract job title, company, tech stack, and more from the description
               </Typography>
             </Card>
             <Card
               sx={{
-                p: 3,
+                p: 2.5,
                 border: `1px solid ${theme.palette.divider}`,
                 cursor: "pointer",
                 "&:hover": {
                   borderColor: theme.palette.primary.main,
                 },
               }}
-              onClick={() => {
-                setParseMode("manual");
-                setCurrentStep(2);
-              }}
+              onClick={handleManualEntryClick}
             >
               <Box
                 sx={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 2,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 1.5,
                   bgcolor: `${theme.palette.primary.main}14`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: theme.palette.primary.main,
-                  mb: 2,
+                  mb: 1.5,
                 }}
               >
-                <Pencil size={24} />
+                <Pencil size={20} />
               </Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 600, mb: 0.75, fontSize: "0.95rem" }}
+              >
                 Manual Entry
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
                 Fill in the details yourself if you prefer full control
               </Typography>
             </Card>
@@ -797,7 +1216,30 @@ export default function AddJobApplicationPage() {
       case 1:
         return <PasteJobStep formData={formData} setFormData={setFormData} />;
       case 2:
-        return <ParseDetailsStep formData={formData} setFormData={setFormData} />;
+        return (
+          <Box sx={{ position: "relative" }}>
+            {isParsing && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  bgcolor: "rgba(255,255,255,0.8)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 1,
+                  borderRadius: 1,
+                }}
+              >
+                <CircularProgress size={28} />
+              </Box>
+            )}
+            <ParseDetailsStep formData={formData} setFormData={setFormData} entryMode={parseMode} />
+          </Box>
+        );
       case 3:
         return <ReviewStep formData={formData} />;
       default:
@@ -811,10 +1253,11 @@ export default function AddJobApplicationPage() {
       <Button
         component={Link}
         href="/job-applications"
-        startIcon={<ChevronLeft size={18} />}
+        startIcon={<ChevronLeft size={16} />}
         sx={{
-          mb: 2,
+          mb: 1.5,
           textTransform: "none",
+          fontSize: "0.875rem",
           color: theme.palette.primary.main,
         }}
       >
@@ -826,13 +1269,13 @@ export default function AddJobApplicationPage() {
         variant="h4"
         sx={{
           fontWeight: 700,
-          mb: 1,
-          fontSize: { xs: "1.5rem", sm: "2rem" },
+          mb: 0.75,
+          fontSize: { xs: "1.3rem", sm: "1.7rem" },
         }}
       >
         Add Job Application
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontSize: "0.85rem" }}>
         Track a new job opportunity
       </Typography>
 
@@ -847,17 +1290,17 @@ export default function AddJobApplicationPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          mt: 3,
+          mt: 2.5,
           flexDirection: { xs: "column-reverse", sm: "row" },
-          gap: 2,
+          gap: 1.5,
         }}
       >
         <Button
           variant="outlined"
-          startIcon={<ChevronLeft size={18} />}
+          startIcon={<ChevronLeft size={16} />}
           onClick={handleBack}
           disabled={currentStep === 1 && !parseMode}
-          sx={{ textTransform: "none" }}
+          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
         >
           Back
         </Button>
@@ -865,33 +1308,49 @@ export default function AddJobApplicationPage() {
         {currentStep === 3 ? (
           <Button
             variant="contained"
-            startIcon={<Check size={18} />}
+            startIcon={
+              isSaving ? <CircularProgress size={16} color="inherit" /> : <Check size={16} />
+            }
             onClick={handleSave}
-            sx={{ textTransform: "none" }}
+            disabled={isSaving}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
           >
-            Save Job Application
+            {isSaving ? "Saving..." : "Save Job Application"}
           </Button>
         ) : currentStep === 1 && !parseMode ? (
           <Button
             variant="contained"
-            endIcon={<ChevronRight size={18} />}
+            endIcon={<ChevronRight size={16} />}
             onClick={handleNext}
             disabled={!formData.jobDescription.trim()}
-            sx={{ textTransform: "none" }}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
           >
             Continue
           </Button>
         ) : (
           <Button
             variant="contained"
-            endIcon={<ChevronRight size={18} />}
+            endIcon={<ChevronRight size={16} />}
             onClick={handleNext}
-            sx={{ textTransform: "none" }}
+            disabled={isParsing}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
           >
             Next
           </Button>
         )}
       </Box>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

@@ -42,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               color: theme.palette.text.primary,
             }}
           >
-            <Menu size={24} />
+            <Menu size={20} />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -52,7 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 2, sm: 3 },
+          p: { xs: 3, sm: 4, md: 5 },
           width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
           mt: { xs: "64px", md: 0 },
         }}

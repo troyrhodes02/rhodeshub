@@ -127,8 +127,8 @@ function ActivityIcon({ type, Icon }: { type: string; Icon: any }) {
   return (
     <Box
       sx={{
-        width: 32,
-        height: 32,
+        width: 28,
+        height: 28,
         borderRadius: "50%",
         bgcolor: `${iconColors[type] || theme.palette.text.secondary}14`,
         display: "flex",
@@ -138,7 +138,7 @@ function ActivityIcon({ type, Icon }: { type: string; Icon: any }) {
         flexShrink: 0,
       }}
     >
-      <Icon size={16} />
+      <Icon size={14} />
     </Box>
   );
 }
@@ -168,10 +168,10 @@ function EmailCard({ email }: { email: (typeof mockJob.emails)[0] }) {
         mb: 2,
       }}
     >
-      <CardContent sx={{ p: 2 }}>
+      <CardContent sx={{ p: 1.5 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75 }}>
               <Chip
                 label={email.status}
                 size="small"
@@ -179,17 +179,18 @@ function EmailCard({ email }: { email: (typeof mockJob.emails)[0] }) {
                   bgcolor: statusColors.bg,
                   color: statusColors.color,
                   fontWeight: 500,
-                  height: 22,
+                  height: 20,
+                  fontSize: "0.7rem",
                 }}
               />
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                 {email.date}
               </Typography>
             </Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5, fontSize: "0.85rem" }}>
               {email.subject}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
               {email.preview}
             </Typography>
           </Box>
@@ -201,7 +202,7 @@ function EmailCard({ email }: { email: (typeof mockJob.emails)[0] }) {
               transition: "transform 0.2s",
             }}
           >
-            <ChevronDown size={18} />
+            <ChevronDown size={16} />
           </IconButton>
         </Box>
       </CardContent>
@@ -236,14 +237,15 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 2.5 }}>
         <Button
           component={Link}
           href="/job-applications"
-          startIcon={<ChevronLeft size={18} />}
+          startIcon={<ChevronLeft size={16} />}
           sx={{
-            mb: 2,
+            mb: 1.5,
             textTransform: "none",
+            fontSize: "0.875rem",
             color: theme.palette.primary.main,
           }}
         >
@@ -256,16 +258,16 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
             flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-between",
             alignItems: { xs: "flex-start", sm: "center" },
-            gap: 2,
+            gap: 1.5,
           }}
         >
           <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 0.75 }}>
               <Typography
                 variant="h4"
                 sx={{
                   fontWeight: 700,
-                  fontSize: { xs: "1.5rem", sm: "2rem" },
+                  fontSize: { xs: "1.3rem", sm: "1.7rem" },
                 }}
               >
                 {job.title}
@@ -276,10 +278,12 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
                   bgcolor: statusColors.bg,
                   color: statusColors.color,
                   fontWeight: 500,
+                  fontSize: "0.75rem",
+                  height: 26,
                 }}
               />
             </Box>
-            <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 0.75, fontSize: "1rem" }}>
               {job.company}
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
@@ -306,20 +310,20 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
           <Box sx={{ display: "flex", gap: 1 }}>
             <Button
               variant="outlined"
-              startIcon={<ExternalLink size={18} />}
-              sx={{ textTransform: "none" }}
+              startIcon={<ExternalLink size={16} />}
+              sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
             >
               View Listing
             </Button>
             <Button
               variant="outlined"
-              startIcon={<Pencil size={18} />}
-              sx={{ textTransform: "none" }}
+              startIcon={<Pencil size={16} />}
+              sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
             >
               Edit
             </Button>
-            <IconButton color="error">
-              <Trash2 size={18} />
+            <IconButton color="error" size="small">
+              <Trash2 size={16} />
             </IconButton>
           </Box>
         </Box>
@@ -330,15 +334,15 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "1fr", lg: "2fr 1fr" },
-          gap: 3,
+          gap: 2.5,
         }}
       >
         {/* Left Column */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {/* Job Summary */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
                 Job Summary
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -391,8 +395,8 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
 
           {/* Activity Timeline */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
                 Activity Timeline
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -434,10 +438,10 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
 
           {/* Related Emails */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-                <Mail size={20} color={theme.palette.text.secondary} />
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+                <Mail size={18} color={theme.palette.text.secondary} />
+                <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1rem" }}>
                   Related Emails ({job.emails.length})
                 </Typography>
               </Box>
@@ -452,8 +456,8 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {/* Quick Actions */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
                 Quick Actions
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -481,8 +485,8 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
 
           {/* Original Description */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
                 Original Description
               </Typography>
               <Typography variant="body2" color="text.secondary">

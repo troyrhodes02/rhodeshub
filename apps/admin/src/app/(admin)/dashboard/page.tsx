@@ -54,15 +54,15 @@ function createCustomTooltip(theme: any) {
             backgroundColor: theme.palette.background.paper,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 1,
-            p: 1.5,
+            p: 1.25,
             boxShadow: theme.shadows[4],
           }}
         >
-          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: "0.8rem" }}>
             {label}
           </Typography>
           {payload.map((entry: any, index: number) => (
-            <Typography key={index} variant="body2" sx={{ color: entry.color }}>
+            <Typography key={index} variant="body2" sx={{ color: entry.color, fontSize: "0.8rem" }}>
               {entry.name}: {entry.value}
             </Typography>
           ))}
@@ -95,15 +95,15 @@ function MetricCard({
         border: `1px solid ${theme.palette.divider}`,
       }}
     >
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+      <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
         <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <Box sx={{ flex: 1 }}>
             <Typography
               variant="body2"
               color="text.secondary"
               sx={{
-                mb: 1,
-                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                mb: 0.75,
+                fontSize: { xs: "0.7rem", sm: "0.8rem" },
               }}
             >
               {title}
@@ -112,8 +112,8 @@ function MetricCard({
               variant="h4"
               sx={{
                 fontWeight: 700,
-                mb: subtitle ? 0.5 : 1,
-                fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" },
+                mb: subtitle ? 0.5 : 0.75,
+                fontSize: { xs: "1.3rem", sm: "1.7rem", md: "1.8rem" },
               }}
             >
               {value}
@@ -123,8 +123,8 @@ function MetricCard({
                 variant="body2"
                 color="text.secondary"
                 sx={{
-                  mb: 1,
-                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  mb: 0.75,
+                  fontSize: { xs: "0.7rem", sm: "0.8rem" },
                 }}
               >
                 {subtitle}
@@ -136,7 +136,7 @@ function MetricCard({
                 sx={{
                   color: theme.palette.success.main,
                   fontWeight: 600,
-                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  fontSize: { xs: "0.7rem", sm: "0.8rem" },
                 }}
               >
                 {change}
@@ -145,9 +145,9 @@ function MetricCard({
           </Box>
           <Box
             sx={{
-              width: { xs: 40, sm: 48 },
-              height: { xs: 40, sm: 48 },
-              borderRadius: 2,
+              width: { xs: 34, sm: 40 },
+              height: { xs: 34, sm: 40 },
+              borderRadius: 1.5,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -156,7 +156,7 @@ function MetricCard({
               flexShrink: 0,
             }}
           >
-            <Icon size={20} />
+            <Icon size={18} />
           </Box>
         </Box>
       </CardContent>
@@ -171,13 +171,13 @@ export default function DashboardPage() {
   return (
     <Box>
       {/* Welcome Header */}
-      <Box sx={{ mb: { xs: 3, md: 4 } }}>
+      <Box sx={{ mb: { xs: 2.5, md: 3 } }}>
         <Typography
           variant="h4"
           sx={{
             fontWeight: 700,
-            mb: 1,
-            fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" },
+            mb: 0.75,
+            fontSize: { xs: "1.3rem", sm: "1.7rem", md: "1.8rem" },
           }}
         >
           Welcome back, William
@@ -186,7 +186,7 @@ export default function DashboardPage() {
           variant="body1"
           color="text.secondary"
           sx={{
-            fontSize: { xs: "0.875rem", sm: "1rem" },
+            fontSize: { xs: "0.8rem", sm: "0.9rem" },
           }}
         >
           Here&apos;s what&apos;s happening with your portfolio today.
@@ -198,8 +198,8 @@ export default function DashboardPage() {
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
-          gap: { xs: 2, sm: 3 },
-          mb: { xs: 3, md: 4 },
+          gap: { xs: 1.5, sm: 2.5 },
+          mb: { xs: 2.5, md: 3 },
         }}
       >
         <MetricCard title="Total Page Views" value="12,847" change="+23%" icon={Eye} />
@@ -218,8 +218,8 @@ export default function DashboardPage() {
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
-          gap: { xs: 2, sm: 3 },
-          mb: { xs: 3, md: 4 },
+          gap: { xs: 1.5, sm: 2.5 },
+          mb: { xs: 2.5, md: 3 },
         }}
       >
         {/* Page Views Line Chart */}
@@ -230,18 +230,18 @@ export default function DashboardPage() {
               border: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
               <Typography
                 variant="h6"
                 sx={{
                   fontWeight: 600,
-                  mb: { xs: 2, sm: 3 },
-                  fontSize: { xs: "1rem", sm: "1.25rem" },
+                  mb: { xs: 1.5, sm: 2.5 },
+                  fontSize: { xs: "0.9rem", sm: "1.1rem" },
                 }}
               >
                 Page Views This Week
               </Typography>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={pageViewsData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
                   <XAxis
@@ -280,18 +280,18 @@ export default function DashboardPage() {
               border: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
               <Typography
                 variant="h6"
                 sx={{
                   fontWeight: 600,
-                  mb: { xs: 2, sm: 3 },
-                  fontSize: { xs: "1rem", sm: "1.25rem" },
+                  mb: { xs: 1.5, sm: 2.5 },
+                  fontSize: { xs: "0.9rem", sm: "1.1rem" },
                 }}
               >
                 Project Views
               </Typography>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart
                   data={projectViewsData}
                   layout="vertical"
@@ -332,7 +332,7 @@ export default function DashboardPage() {
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
-          gap: { xs: 2, sm: 3 },
+          gap: { xs: 1.5, sm: 2.5 },
         }}
       >
         {/* AI Demo Usage */}
@@ -343,15 +343,15 @@ export default function DashboardPage() {
               border: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: { xs: "column", sm: "row" },
                   justifyContent: "space-between",
                   alignItems: { xs: "flex-start", sm: "flex-start" },
-                  mb: { xs: 2, sm: 3 },
-                  gap: { xs: 2, sm: 0 },
+                  mb: { xs: 1.5, sm: 2.5 },
+                  gap: { xs: 1.5, sm: 0 },
                 }}
               >
                 <Box>
@@ -360,7 +360,7 @@ export default function DashboardPage() {
                     sx={{
                       fontWeight: 600,
                       mb: 0.5,
-                      fontSize: { xs: "1rem", sm: "1.25rem" },
+                      fontSize: { xs: "0.9rem", sm: "1.1rem" },
                     }}
                   >
                     AI Demo Usage
@@ -368,7 +368,7 @@ export default function DashboardPage() {
                   <Typography
                     variant="body2"
                     color="text.secondary"
-                    sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                    sx={{ fontSize: { xs: "0.7rem", sm: "0.8rem" } }}
                   >
                     Public demo analytics
                   </Typography>
@@ -378,7 +378,7 @@ export default function DashboardPage() {
                     variant="h4"
                     sx={{
                       fontWeight: 700,
-                      fontSize: { xs: "1.5rem", sm: "2rem" },
+                      fontSize: { xs: "1.3rem", sm: "1.7rem" },
                     }}
                   >
                     1,247
@@ -388,7 +388,7 @@ export default function DashboardPage() {
                     sx={{
                       color: theme.palette.success.main,
                       fontWeight: 600,
-                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      fontSize: { xs: "0.7rem", sm: "0.8rem" },
                     }}
                   >
                     +18% this month
@@ -400,8 +400,8 @@ export default function DashboardPage() {
                 sx={{
                   display: "grid",
                   gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
-                  gap: { xs: 1.5, sm: 2 },
-                  mb: 2,
+                  gap: { xs: 1.25, sm: 1.75 },
+                  mb: 1.5,
                 }}
               >
                 <Box>
@@ -412,12 +412,12 @@ export default function DashboardPage() {
                       bgcolor: theme.palette.background.default,
                     }}
                   >
-                    <CardContent sx={{ p: 2 }}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <CardContent sx={{ p: 1.5 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
                         <Box
                           sx={{
-                            width: 40,
-                            height: 40,
+                            width: 34,
+                            height: 34,
                             borderRadius: 1,
                             display: "flex",
                             alignItems: "center",
@@ -426,13 +426,17 @@ export default function DashboardPage() {
                             color: theme.palette.primary.main,
                           }}
                         >
-                          <FileText size={20} />
+                          <FileText size={18} />
                         </Box>
                         <Box>
-                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1rem" }}>
                             412
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontSize: "0.75rem" }}
+                          >
                             Resume Only
                           </Typography>
                         </Box>
@@ -448,12 +452,12 @@ export default function DashboardPage() {
                       bgcolor: theme.palette.background.default,
                     }}
                   >
-                    <CardContent sx={{ p: 2 }}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <CardContent sx={{ p: 1.5 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
                         <Box
                           sx={{
-                            width: 40,
-                            height: 40,
+                            width: 34,
+                            height: 34,
                             borderRadius: 1,
                             display: "flex",
                             alignItems: "center",
@@ -462,13 +466,17 @@ export default function DashboardPage() {
                             color: theme.palette.secondary.main,
                           }}
                         >
-                          <Search size={20} />
+                          <Search size={18} />
                         </Box>
                         <Box>
-                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1rem" }}>
                             358
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontSize: "0.75rem" }}
+                          >
                             Job Description Only
                           </Typography>
                         </Box>
@@ -484,12 +492,12 @@ export default function DashboardPage() {
                       bgcolor: theme.palette.background.default,
                     }}
                   >
-                    <CardContent sx={{ p: 2 }}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <CardContent sx={{ p: 1.5 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
                         <Box
                           sx={{
-                            width: 40,
-                            height: 40,
+                            width: 34,
+                            height: 34,
                             borderRadius: 1,
                             display: "flex",
                             alignItems: "center",
@@ -498,13 +506,17 @@ export default function DashboardPage() {
                             color: theme.palette.highlight.main,
                           }}
                         >
-                          <Sparkles size={20} />
+                          <Sparkles size={18} />
                         </Box>
                         <Box>
-                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1rem" }}>
                             477
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontSize: "0.75rem" }}
+                          >
                             Combined Analysis
                           </Typography>
                         </Box>
@@ -529,27 +541,28 @@ export default function DashboardPage() {
               border: `1px solid ${theme.palette.divider}`,
             }}
           >
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
               <Typography
                 variant="h6"
                 sx={{
                   fontWeight: 600,
-                  mb: { xs: 2, sm: 3 },
-                  fontSize: { xs: "1rem", sm: "1.25rem" },
+                  mb: { xs: 1.5, sm: 2.5 },
+                  fontSize: { xs: "0.9rem", sm: "1.1rem" },
                 }}
               >
                 Quick Actions
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.5, sm: 2 } }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.25, sm: 1.75 } }}>
                 <Button
                   variant="outlined"
                   fullWidth
-                  startIcon={<Plus size={20} />}
-                  endIcon={<ArrowRight size={20} />}
+                  startIcon={<Plus size={18} />}
+                  endIcon={<ArrowRight size={18} />}
                   sx={{
                     justifyContent: "space-between",
                     textTransform: "none",
-                    py: 1.5,
+                    py: 1.25,
+                    fontSize: "0.875rem",
                     border: `1px solid ${theme.palette.divider}`,
                   }}
                 >
@@ -558,12 +571,13 @@ export default function DashboardPage() {
                 <Button
                   variant="outlined"
                   fullWidth
-                  startIcon={<FileText size={20} />}
-                  endIcon={<ArrowRight size={20} />}
+                  startIcon={<FileText size={18} />}
+                  endIcon={<ArrowRight size={18} />}
                   sx={{
                     justifyContent: "space-between",
                     textTransform: "none",
-                    py: 1.5,
+                    py: 1.25,
+                    fontSize: "0.875rem",
                     border: `1px solid ${theme.palette.divider}`,
                   }}
                 >

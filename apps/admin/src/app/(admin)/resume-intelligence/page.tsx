@@ -923,8 +923,8 @@ export default function ResumeIntelligencePage() {
           flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
           alignItems: { xs: "flex-start", sm: "center" },
-          gap: 2,
-          mb: { xs: 3, md: 4 },
+          gap: 1.5,
+          mb: { xs: 2.5, md: 3 },
         }}
       >
         <Box>
@@ -932,20 +932,20 @@ export default function ResumeIntelligencePage() {
             variant="h4"
             sx={{
               fontWeight: 700,
-              fontSize: { xs: "1.5rem", sm: "2rem" },
+              fontSize: { xs: "1.3rem", sm: "1.7rem" },
             }}
           >
             Resume Intelligence
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
             AI-powered resume analysis with automatic optimization.
           </Typography>
         </Box>
         <Button
           variant="contained"
-          startIcon={<Plus size={20} />}
+          startIcon={<Plus size={18} />}
           onClick={() => setAddResumeOpen(true)}
-          sx={{ textTransform: "none" }}
+          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
         >
           Add Resume
         </Button>
@@ -987,26 +987,32 @@ export default function ResumeIntelligencePage() {
                 },
               }}
             >
-              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: { xs: "column", sm: "row" },
                     alignItems: { xs: "flex-start", sm: "center" },
-                    gap: 2,
+                    gap: 1.5,
                   }}
                 >
                   <Box sx={{ flex: 1 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                      <FileText size={20} color={theme.palette.text.secondary} />
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 0.75 }}>
+                      <FileText size={18} color={theme.palette.text.secondary} />
+                      <Typography variant="subtitle1" sx={{ fontWeight: 600, fontSize: "0.95rem" }}>
                         {resume.title}
                       </Typography>
                     </Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 0.75, fontSize: "0.8rem" }}
+                    >
                       {resume.skills.join(" • ")}
                     </Typography>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}
+                    >
                       <Chip
                         label={resume.status}
                         size="small"
@@ -1014,7 +1020,8 @@ export default function ResumeIntelligencePage() {
                           bgcolor: `${theme.palette.secondary.main}1A`,
                           color: theme.palette.secondary.main,
                           fontWeight: 500,
-                          height: 24,
+                          height: 22,
+                          fontSize: "0.7rem",
                         }}
                       />
                       {resume.skills.map((skill) => (
@@ -1023,23 +1030,24 @@ export default function ResumeIntelligencePage() {
                           label={skill}
                           size="small"
                           sx={{
+                            fontSize: "0.7rem",
+                            height: 22,
                             bgcolor: theme.palette.background.default,
                             border: `1px solid ${theme.palette.divider}`,
-                            height: 24,
                           }}
                         />
                       ))}
                     </Box>
                   </Box>
-                  <Box sx={{ display: "flex", gap: 1 }}>
+                  <Box sx={{ display: "flex", gap: 0.75 }}>
                     <IconButton size="small">
-                      <Eye size={18} />
+                      <Eye size={16} />
                     </IconButton>
                     <IconButton size="small">
-                      <Pencil size={18} />
+                      <Pencil size={16} />
                     </IconButton>
                     <IconButton size="small" color="error">
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </IconButton>
                   </Box>
                 </Box>
@@ -1052,18 +1060,22 @@ export default function ResumeIntelligencePage() {
       <TabPanel value={activeTab} index={1}>
         {/* Analyze Job */}
         <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 0.5 }}>
-              <Target size={20} color={theme.palette.primary.main} />
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, mb: 0.5 }}>
+              <Target size={18} color={theme.palette.primary.main} />
+              <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1rem" }}>
                 Analyze Job
               </Typography>
             </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mb: 2.5, fontSize: "0.85rem" }}
+            >
               Paste a job description for full AI-powered analysis.
             </Typography>
 
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
               <TextField
                 label="Job Description"
                 placeholder="Paste the full job description here..."
@@ -1075,7 +1087,7 @@ export default function ResumeIntelligencePage() {
               />
 
               <Box>
-                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.25, fontSize: "0.85rem" }}>
                   Resume Selection
                 </Typography>
                 <FormControl>
@@ -1094,10 +1106,15 @@ export default function ResumeIntelligencePage() {
 
               <Button
                 variant="contained"
-                startIcon={<Sparkles size={18} />}
+                startIcon={<Sparkles size={16} />}
                 onClick={() => setAnalysisResultsOpen(true)}
                 disabled={!jobDescription.trim()}
-                sx={{ textTransform: "none", alignSelf: "flex-start" }}
+                sx={{
+                  textTransform: "none",
+                  fontSize: "0.875rem",
+                  py: 0.75,
+                  alignSelf: "flex-start",
+                }}
               >
                 Run Full Analysis
               </Button>
@@ -1117,13 +1134,13 @@ export default function ResumeIntelligencePage() {
           }}
           onClick={() => setAnalysisResultsOpen(true)}
         >
-          <CardContent sx={{ p: 2 }}>
+          <CardContent sx={{ p: 1.5 }}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                 <Box
                   sx={{
-                    width: 48,
-                    height: 48,
+                    width: 40,
+                    height: 40,
                     borderRadius: "50%",
                     bgcolor: `${theme.palette.primary.main}14`,
                     display: "flex",
@@ -1131,24 +1148,24 @@ export default function ResumeIntelligencePage() {
                     justifyContent: "center",
                     color: theme.palette.primary.main,
                     fontWeight: 700,
-                    fontSize: "1.25rem",
+                    fontSize: "1.1rem",
                   }}
                 >
                   89
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
                     Last Analysis: Full-Stack Software Engineer
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
                     Click to view full results
                   </Typography>
                 </Box>
               </Box>
               <Button
                 variant="outlined"
-                startIcon={<Eye size={18} />}
-                sx={{ textTransform: "none" }}
+                startIcon={<Eye size={16} />}
+                sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   setAnalysisResultsOpen(true);

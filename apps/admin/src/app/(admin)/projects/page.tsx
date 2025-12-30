@@ -78,16 +78,16 @@ function ProjectCard({ project }: { project: (typeof mockProjects)[0] }) {
   return (
     <Card
       sx={{
-        p: 2,
-        mb: 2,
+        p: 1.75,
+        mb: 1.5,
         border: `1px solid ${theme.palette.divider}`,
       }}
     >
       <Box
-        sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}
+        sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1.5 }}
       >
         <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, fontSize: "0.95rem" }}>
             {project.name}
           </Typography>
           <Chip
@@ -95,24 +95,26 @@ function ProjectCard({ project }: { project: (typeof mockProjects)[0] }) {
             size="small"
             sx={{
               mt: 0.5,
+              fontSize: "0.7rem",
+              height: 22,
               bgcolor: theme.palette.background.default,
               border: `1px solid ${theme.palette.divider}`,
             }}
           />
         </Box>
         <IconButton size="small">
-          <MoreVertical size={18} />
+          <MoreVertical size={16} />
         </IconButton>
       </Box>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 2 }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1.5 }}>
         {project.techStack.slice(0, 3).map((tech) => (
           <Chip
             key={tech}
             label={tech}
             size="small"
             sx={{
-              fontSize: "0.75rem",
-              height: 24,
+              fontSize: "0.7rem",
+              height: 22,
               bgcolor: theme.palette.background.default,
               border: `1px solid ${theme.palette.divider}`,
             }}
@@ -123,8 +125,8 @@ function ProjectCard({ project }: { project: (typeof mockProjects)[0] }) {
             label={`+${project.techStack.length - 3}`}
             size="small"
             sx={{
-              fontSize: "0.75rem",
-              height: 24,
+              fontSize: "0.7rem",
+              height: 22,
               bgcolor: theme.palette.background.default,
             }}
           />
@@ -135,6 +137,8 @@ function ProjectCard({ project }: { project: (typeof mockProjects)[0] }) {
           label={project.status}
           size="small"
           sx={{
+            fontSize: "0.7rem",
+            height: 22,
             bgcolor:
               project.status === "Published"
                 ? `${theme.palette.secondary.main}1A`
@@ -146,14 +150,18 @@ function ProjectCard({ project }: { project: (typeof mockProjects)[0] }) {
             fontWeight: 500,
           }}
         />
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography variant="caption" color="text.secondary">
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
             Featured
           </Typography>
           <Switch checked={project.featured} size="small" />
         </Box>
       </Box>
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ mt: 0.75, display: "block", fontSize: "0.7rem" }}
+      >
         Updated {project.updatedAt}
       </Typography>
     </Card>
@@ -179,8 +187,8 @@ export default function ProjectsPage() {
           flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
           alignItems: { xs: "flex-start", sm: "center" },
-          gap: 2,
-          mb: { xs: 3, md: 4 },
+          gap: 1.5,
+          mb: { xs: 2.5, md: 3 },
         }}
       >
         <Box>
@@ -188,20 +196,20 @@ export default function ProjectsPage() {
             variant="h4"
             sx={{
               fontWeight: 700,
-              fontSize: { xs: "1.5rem", sm: "2rem" },
+              fontSize: { xs: "1.3rem", sm: "1.7rem" },
             }}
           >
             Projects
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
             Manage your portfolio projects and case studies.
           </Typography>
         </Box>
         <Button
           variant="contained"
-          startIcon={<Plus size={20} />}
+          startIcon={<Plus size={18} />}
           onClick={() => router.push("/projects/add")}
-          sx={{ textTransform: "none" }}
+          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
         >
           Add Project
         </Button>
@@ -214,7 +222,7 @@ export default function ProjectsPage() {
         onChange={(e) => setSearchQuery(e.target.value)}
         size="small"
         sx={{
-          mb: 3,
+          mb: 2.5,
           width: { xs: "100%", sm: 300 },
           "& .MuiOutlinedInput-root": {
             bgcolor: theme.palette.background.paper,
@@ -223,7 +231,7 @@ export default function ProjectsPage() {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <Search size={18} color={theme.palette.text.secondary} />
+              <Search size={16} color={theme.palette.text.secondary} />
             </InputAdornment>
           ),
         }}

@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { useThemeMode } from "@/app/theme";
 
-const SIDEBAR_WIDTH = 280;
+const SIDEBAR_WIDTH = 240;
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -65,28 +65,28 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       {/* Header */}
       <Box
         sx={{
-          p: 3,
+          p: 2.5,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: 2,
+          gap: 1.5,
           borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {/* W Avatar matching portfolio navbar style */}
           <Box
             sx={{
-              width: 40,
-              height: 40,
-              borderRadius: 2,
+              width: 34,
+              height: 34,
+              borderRadius: 1.5,
               bgcolor: theme.palette.primary.main,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: theme.palette.primary.contrastText,
               fontWeight: 700,
-              fontSize: "1.25rem",
+              fontSize: "1.1rem",
               flexShrink: 0,
             }}
           >
@@ -97,6 +97,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             sx={{
               fontWeight: 600,
               color: theme.palette.text.primary,
+              fontSize: "1rem",
             }}
           >
             Admin Panel
@@ -110,12 +111,12 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             color: theme.palette.text.secondary,
           }}
         >
-          <X size={20} />
+          <X size={18} />
         </IconButton>
       </Box>
 
       {/* Navigation */}
-      <List sx={{ flex: 1, pt: 2 }}>
+      <List sx={{ flex: 1, pt: 1.5 }}>
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
@@ -127,9 +128,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
               selected={isActive}
               onClick={onMobileClose}
               sx={{
-                mx: 1,
+                mx: 0.75,
                 mb: 0.5,
                 borderRadius: 1,
+                py: 0.75,
                 color: isActive ? theme.palette.text.primary : theme.palette.text.secondary,
                 backgroundColor: isActive ? `${theme.palette.primary.main}1A` : "transparent",
                 border: isActive
@@ -152,17 +154,18 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
             >
               <ListItemIcon
                 sx={{
-                  minWidth: 40,
+                  minWidth: 36,
                   color: isActive ? theme.palette.primary.main : theme.palette.text.secondary,
                 }}
               >
-                <Icon size={20} />
+                <Icon size={18} />
               </ListItemIcon>
               <ListItemText
                 primary={item.label}
                 primaryTypographyProps={{
                   fontWeight: isActive ? 600 : 400,
                   color: "inherit",
+                  fontSize: "0.875rem",
                 }}
               />
             </ListItemButton>
@@ -173,17 +176,19 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
       <Divider />
 
       {/* Bottom Actions */}
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 1.5 }}>
         <Button
           fullWidth
           variant="contained"
-          startIcon={<Plus size={20} />}
+          startIcon={<Plus size={18} />}
           component={Link}
           href="/projects"
           onClick={onMobileClose}
           sx={{
-            mb: 2,
+            mb: 1.5,
             textTransform: "none",
+            fontSize: "0.875rem",
+            py: 0.75,
           }}
         >
           Add Project
@@ -192,11 +197,13 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
           fullWidth
           component="a"
           href={getPortfolioUrl()}
-          startIcon={<Home size={20} />}
+          startIcon={<Home size={18} />}
           onClick={onMobileClose}
           sx={{
-            mb: 2,
+            mb: 1.5,
             textTransform: "none",
+            fontSize: "0.875rem",
+            py: 0.75,
             color: theme.palette.text.secondary,
             border: `1px solid transparent`,
             "&:hover": {
@@ -211,9 +218,11 @@ export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarPr
           onClick={toggleMode}
           fullWidth
           variant="outlined"
-          startIcon={resolvedMode === "light" ? <Moon size={20} /> : <Sun size={20} />}
+          startIcon={resolvedMode === "light" ? <Moon size={18} /> : <Sun size={18} />}
           sx={{
             textTransform: "none",
+            fontSize: "0.875rem",
+            py: 0.75,
           }}
           aria-label="Toggle theme"
         >
