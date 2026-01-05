@@ -392,6 +392,7 @@ export default function JobInboxPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [emails, setEmails] = useState<DisplayEmail[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isClassifying, setIsClassifying] = useState(false);
 
   useEffect(() => {
     async function fetchEmails() {
@@ -428,6 +429,40 @@ export default function JobInboxPage() {
     rejections: emails.filter((e) => e.type === "Rejection").length,
   };
 
+  // Classify all emails using the classification API
+  const handleClassifyEmails = async () => {
+    if (emails.length === 0 || isClassifying) return;
+
+    setIsClassifying(true);
+
+    // Create a copy of emails to update
+    const updatedEmails = [...emails];
+
+    // Classify each email
+    for (let i = 0; i < updatedEmails.length; i++) {
+      const email = updatedEmails[i];
+      try {
+        const res = await fetch("/api/admin/job-inbox/classify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emailId: email.id }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          updatedEmails[i] = { ...email, type: data.label };
+        } else {
+          console.error(`Failed to classify email ${email.id}: HTTP ${res.status}`);
+        }
+      } catch (err) {
+        console.error(`Failed to classify email ${email.id}:`, err);
+      }
+    }
+
+    setEmails(updatedEmails);
+    setIsClassifying(false);
+  };
+
   return (
     <Box>
       {/* Header */}
@@ -460,8 +495,10 @@ export default function JobInboxPage() {
             variant="contained"
             startIcon={<Sparkles size={18} />}
             sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
+            onClick={handleClassifyEmails}
+            disabled={isClassifying || emails.length === 0}
           >
-            Classify Emails
+            {isClassifying ? "Classifying..." : "Classify Emails"}
           </Button>
           <Button
             variant="outlined"
