@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -33,157 +33,78 @@ import {
   ChevronUp,
   X,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 
-// Mock email data
-const mockEmails = [
-  {
-    id: "1",
-    type: "Confirmation",
-    company: "Stripe",
-    date: "3/10/2024",
-    subject: "Thank you for applying to Stripe",
-    from: "recruiting@stripe.com",
-    to: "william@example.com",
-    preview: "Thank you for your interest in the Senior Frontend Engineer position...",
-    linkedJob: "Senior Frontend Engineer at Stripe",
-    body: `Hi William,
+// EmailMessage shape from API
+interface EmailMessageFromApi {
+  id: string;
+  externalId: string;
+  from: string;
+  to: string;
+  subject: string;
+  preview: string;
+  body: string;
+  receivedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-Thank you for your interest in the Senior Frontend Engineer position at Stripe.
+// UI email shape (with display-only fields)
+interface DisplayEmail {
+  id: string;
+  type: string;
+  company: string;
+  date: string;
+  subject: string;
+  from: string;
+  to: string;
+  preview: string;
+  linkedJob: string;
+  body: string;
+  timestamp: string;
+}
 
-We have received your application and our team is currently reviewing it. We receive many applications for each role, so this process may take some time.
+// Helper to extract company name from email address
+function extractCompanyFromEmail(email: string): string {
+  const match = email.match(/@([^.]+)/);
+  if (match && match[1]) {
+    return match[1].charAt(0).toUpperCase() + match[1].slice(1);
+  }
+  return "Unknown";
+}
 
-If your background is a match for this role, a member of our recruiting team will reach out to you directly.
+// Helper to format date for display
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US");
+}
 
-Best regards,
-Stripe Recruiting Team`,
-    timestamp: "3/10/2024, 11:00:00 AM",
-  },
-  {
-    id: "2",
-    type: "Interview",
-    company: "Stripe",
-    date: "3/18/2024",
-    subject: "Interview Invitation - Senior Frontend Engineer at Stripe",
-    from: "sarah@stripe.com",
-    to: "william@example.com",
-    preview: "We were impressed by your background and would like to invite you...",
-    linkedJob: "Senior Frontend Engineer at Stripe",
-    body: `Hi William,
+// Helper to format timestamp for display
+function formatTimestamp(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleString("en-US");
+}
 
-We were impressed by your background and would like to invite you to interview for the Senior Frontend Engineer position at Stripe.
-
-Please let us know your availability for the following dates:
-- Monday, March 25th
-- Wednesday, March 27th
-- Friday, March 29th
-
-Looking forward to speaking with you!
-
-Best,
-Sarah
-Stripe Recruiting`,
-    timestamp: "3/18/2024, 09:00:00 AM",
-  },
-  {
-    id: "3",
-    type: "Rejection",
-    company: "Notion",
-    date: "3/20/2024",
-    subject: "Update on your application to Notion",
-    from: "careers@notion.so",
-    to: "william@example.com",
-    preview:
-      "After careful consideration, we have decided to move forward with other candidates...",
-    linkedJob: "Full-Stack Engineer at Notion",
-    body: `Hi William,
-
-Thank you for your interest in the Full-Stack Engineer position at Notion.
-
-After careful consideration, we have decided to move forward with other candidates whose experience more closely matches our current needs.
-
-We appreciate the time you took to apply and wish you the best in your job search.
-
-Best regards,
-Notion Careers Team`,
-    timestamp: "3/20/2024, 02:30:00 PM",
-  },
-  {
-    id: "4",
-    type: "Offer",
-    company: "Supabase",
-    date: "3/22/2024",
-    subject: "Offer Letter - Developer Experience Engineer at Supabase",
-    from: "paul@supabase.com",
-    to: "william@example.com",
-    preview: "We are thrilled to extend an offer for the Developer Experience Engineer position...",
-    linkedJob: "Developer Experience Engineer at Supabase",
-    body: `Hi William,
-
-We are thrilled to extend an offer for the Developer Experience Engineer position at Supabase!
-
-We were impressed by your technical skills and passion for developer tools. We believe you would be a great addition to our team.
-
-Please find the offer details attached. We look forward to hearing from you soon.
-
-Best regards,
-Paul
-Supabase Team`,
-    timestamp: "3/22/2024, 10:15:00 AM",
-  },
-  {
-    id: "5",
-    type: "Confirmation",
-    company: "Vercel",
-    date: "3/11/2024",
-    subject: "Application Received - Software Engineer, Platform",
-    from: "careers@vercel.com",
-    to: "william@example.com",
-    preview: "Thank you for applying to Vercel. We have received your application...",
-    linkedJob: "Software Engineer, Platform at Vercel",
-    body: `Hi William,
-
-Thank you for applying to Vercel. We have received your application for the Software Engineer, Platform position.
-
-Our team will review your application and get back to you within the next few weeks.
-
-Best,
-Vercel Careers`,
-    timestamp: "3/11/2024, 03:45:00 PM",
-  },
-  {
-    id: "6",
-    type: "Interview",
-    company: "Linear",
-    date: "3/14/2024",
-    subject: "Next Steps - Frontend Engineer Position",
-    from: "hiring@linear.app",
-    to: "william@example.com",
-    preview: "We'd like to schedule a technical interview for the Frontend Engineer role...",
-    linkedJob: "Frontend Engineer at Linear",
-    body: `Hi William,
-
-We'd like to schedule a technical interview for the Frontend Engineer role at Linear.
-
-Please let us know your availability for next week.
-
-Thanks,
-Linear Hiring Team`,
-    timestamp: "3/14/2024, 11:20:00 AM",
-  },
-];
-
-// Summary stats
-const summaryStats = {
-  total: 6,
-  confirmations: 2,
-  interviews: 1,
-  offers: 1,
-  rejections: 1,
-};
+// Map API EmailMessage to display shape
+function mapEmailToDisplay(email: EmailMessageFromApi): DisplayEmail {
+  return {
+    id: email.id,
+    type: "Unclassified",
+    company: extractCompanyFromEmail(email.from),
+    date: formatDate(email.receivedAt),
+    subject: email.subject,
+    from: email.from,
+    to: email.to,
+    preview: email.preview,
+    linkedJob: "Not linked",
+    body: email.body,
+    timestamp: formatTimestamp(email.receivedAt),
+  };
+}
 
 // Filter options
-const filterOptions = ["All", "Confirmation", "Interview", "Offer", "Rejection"];
+const filterOptions = ["All", "Unclassified", "Confirmation", "Interview", "Offer", "Rejection"];
 
 // Summary Card Component
 function SummaryCard({
@@ -229,7 +150,7 @@ function SummaryCard({
 }
 
 // Email Card Component
-function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
+function EmailCard({ email }: { email: DisplayEmail }) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
 
@@ -469,8 +390,27 @@ export default function JobInboxPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("All");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [emails, setEmails] = useState<DisplayEmail[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredEmails = mockEmails.filter((email) => {
+  useEffect(() => {
+    async function fetchEmails() {
+      try {
+        const res = await fetch("/api/admin/job-inbox/messages");
+        if (res.ok) {
+          const data: EmailMessageFromApi[] = await res.json();
+          setEmails(data.map(mapEmailToDisplay));
+        }
+      } catch (err) {
+        console.error("Failed to fetch emails:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEmails();
+  }, []);
+
+  const filteredEmails = emails.filter((email) => {
     const matchesSearch =
       email.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
       email.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -478,6 +418,15 @@ export default function JobInboxPage() {
     const matchesFilter = filter === "All" || email.type === filter;
     return matchesSearch && matchesFilter;
   });
+
+  // Compute summary stats from loaded emails
+  const summaryStats = {
+    total: emails.length,
+    confirmations: emails.filter((e) => e.type === "Confirmation").length,
+    interviews: emails.filter((e) => e.type === "Interview").length,
+    offers: emails.filter((e) => e.type === "Offer").length,
+    rejections: emails.filter((e) => e.type === "Rejection").length,
+  };
 
   return (
     <Box>
@@ -506,14 +455,23 @@ export default function JobInboxPage() {
             View and classify job-related emails
           </Typography>
         </Box>
-        <Button
-          variant="outlined"
-          startIcon={<Settings size={18} />}
-          onClick={() => setSettingsOpen(true)}
-          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
-        >
-          Settings
-        </Button>
+        <Box sx={{ display: "flex", gap: 1.5 }}>
+          <Button
+            variant="contained"
+            startIcon={<Sparkles size={18} />}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
+          >
+            Classify Emails
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Settings size={18} />}
+            onClick={() => setSettingsOpen(true)}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
+          >
+            Settings
+          </Button>
+        </Box>
       </Box>
 
       {/* Summary Cards */}
@@ -534,12 +492,13 @@ export default function JobInboxPage() {
 
       {/* Search and Filter */}
       <Card sx={{ border: `1px solid ${theme.palette.divider}`, mb: 2.5 }}>
-        <CardContent sx={{ p: 1.5 }}>
+        <CardContent sx={{ p: 2.5 }}>
           <Box
             sx={{
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               alignItems: "center",
+              justifyContent: "center",
               gap: 2,
             }}
           >
