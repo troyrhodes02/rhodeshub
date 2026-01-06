@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   Box,
   Card,
@@ -19,81 +18,26 @@ import {
   InputLabel,
   useTheme,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
-import { Plus, Search, Filter, MoreVertical, MapPin, Calendar, ExternalLink } from "lucide-react";
+import { Plus, Search, Filter, MoreVertical, Calendar } from "lucide-react";
 
-// Mock data for job applications
-const mockJobs = [
-  {
-    id: "1",
-    title: "Senior Frontend Engineer",
-    company: "Stripe",
-    location: "San Francisco, CA (Remote)",
-    source: "LinkedIn",
-    date: "3/17/2024",
-    techStack: ["React", "TypeScript", "GraphQL", "Node.js"],
-    status: "Interview",
-    statusColor: "success",
-  },
-  {
-    id: "2",
-    title: "Software Engineer, Platform",
-    company: "Vercel",
-    location: "Remote (US)",
-    source: "Company Site",
-    date: "3/11/2024",
-    techStack: ["Node.js", "TypeScript", "Go", "Rust"],
-    status: "Applied",
-    statusColor: "primary",
-  },
-  {
-    id: "3",
-    title: "Frontend Engineer",
-    company: "Linear",
-    location: "Remote (Worldwide)",
-    source: "Builtin",
-    date: "3/14/2024",
-    techStack: ["React", "TypeScript", "Tailwind", "WebSockets"],
-    status: "Not Applied",
-    statusColor: "default",
-  },
-  {
-    id: "4",
-    title: "Full-Stack Engineer",
-    company: "Notion",
-    location: "New York, NY (Hybrid)",
-    source: "LinkedIn",
-    date: "3/19/2024",
-    techStack: ["React", "TypeScript", "Node.js", "PostgreSQL"],
-    status: "Rejected",
-    statusColor: "error",
-  },
-  {
-    id: "5",
-    title: "Developer Experience Engineer",
-    company: "Unknown",
-    location: "Remote",
-    source: "Unknown",
-    date: "3/20/2024",
-    techStack: [],
-    status: "Offer",
-    statusColor: "success",
-  },
-];
-
-// Summary stats
-const summaryStats = {
-  total: 5,
-  applied: 1,
-  interviewing: 1,
-  offers: 1,
-};
+// Job application list item from API
+interface JobApplicationListItem {
+  id: string;
+  company: string;
+  role: string;
+  link: string;
+  dateApplied: string;
+  status: "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER";
+  createdAt: string;
+  updatedAt: string;
+  lastActivityAt: string;
+  latestEmailReceivedAt?: string;
+}
 
 // Status options for filter
-const statusOptions = ["All Status", "Applied", "Interview", "Offer", "Rejected", "Not Applied"];
-
-// Source options for filter
-const sourceOptions = ["All Sources", "LinkedIn", "Company Site", "Builtin", "Other"];
+const statusOptions = ["All Status", "APPLIED", "INTERVIEW", "OFFER", "REJECTED"];
 
 // Summary Card Component
 function SummaryCard({ label, value, color }: { label: string; value: number; color?: string }) {
@@ -129,20 +73,42 @@ function SummaryCard({ label, value, color }: { label: string; value: number; co
   );
 }
 
+// Helper to format date
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US");
+}
+
+// Helper to get status display label
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case "APPLIED":
+      return "Applied";
+    case "INTERVIEW":
+      return "Interview";
+    case "OFFER":
+      return "Offer";
+    case "REJECTED":
+      return "Rejected";
+    default:
+      return status;
+  }
+}
+
 // Job Card Component (Mobile)
-function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
+function JobCard({ job }: { job: JobApplicationListItem }) {
   const theme = useTheme();
   const router = useRouter();
   const getInitials = (name: string) => name.charAt(0).toUpperCase();
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Interview":
-      case "Offer":
+      case "INTERVIEW":
+      case "OFFER":
         return { bg: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main };
-      case "Applied":
+      case "APPLIED":
         return { bg: `${theme.palette.primary.main}1A`, color: theme.palette.primary.main };
-      case "Rejected":
+      case "REJECTED":
         return { bg: `${theme.palette.error.main}1A`, color: theme.palette.error.main };
       default:
         return { bg: `${theme.palette.text.secondary}1A`, color: theme.palette.text.secondary };
@@ -179,14 +145,14 @@ function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
         </Avatar>
         <Box sx={{ flex: 1 }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5, fontSize: "0.95rem" }}>
-            {job.title}
+            {job.role}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
             {job.company}
           </Typography>
         </Box>
         <Chip
-          label={job.status}
+          label={getStatusLabel(job.status)}
           size="small"
           sx={{
             bgcolor: statusColors.bg,
@@ -198,55 +164,14 @@ function JobCard({ job }: { job: (typeof mockJobs)[0] }) {
         />
       </Box>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.25, mb: 1.5 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <MapPin size={12} color={theme.palette.text.secondary} />
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
-            {job.location}
-          </Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <ExternalLink size={12} color={theme.palette.text.secondary} />
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
-            {job.source}
-          </Typography>
-        </Box>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.25 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
           <Calendar size={12} color={theme.palette.text.secondary} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
-            {job.date}
+            Applied {formatDate(job.dateApplied)}
           </Typography>
         </Box>
       </Box>
-
-      {job.techStack.length > 0 && (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-          {job.techStack.slice(0, 4).map((tech) => (
-            <Chip
-              key={tech}
-              label={tech}
-              size="small"
-              sx={{
-                fontSize: "0.7rem",
-                height: 22,
-                bgcolor: theme.palette.background.default,
-                border: `1px solid ${theme.palette.divider}`,
-              }}
-            />
-          ))}
-          {job.techStack.length > 4 && (
-            <Chip
-              label={`+${job.techStack.length - 4}`}
-              size="small"
-              sx={{
-                fontSize: "0.7rem",
-                height: 22,
-                bgcolor: theme.palette.background.default,
-              }}
-            />
-          )}
-        </Box>
-      )}
     </Card>
   );
 }
@@ -257,27 +182,52 @@ export default function JobApplicationsPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
-  const [sourceFilter, setSourceFilter] = useState("All Sources");
+  const [jobs, setJobs] = useState<JobApplicationListItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredJobs = mockJobs.filter((job) => {
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        const res = await fetch("/api/admin/job-applications");
+        if (res.ok) {
+          const data: JobApplicationListItem[] = await res.json();
+          setJobs(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch job applications:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchJobs();
+  }, []);
+
+  const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
-      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "All Status" || job.status === statusFilter;
-    const matchesSource = sourceFilter === "All Sources" || job.source === sourceFilter;
-    return matchesSearch && matchesStatus && matchesSource;
+    return matchesSearch && matchesStatus;
   });
+
+  // Compute summary stats
+  const summaryStats = {
+    total: jobs.length,
+    applied: jobs.filter((j) => j.status === "APPLIED").length,
+    interviewing: jobs.filter((j) => j.status === "INTERVIEW").length,
+    offers: jobs.filter((j) => j.status === "OFFER").length,
+  };
 
   const getInitials = (name: string) => name.charAt(0).toUpperCase();
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Interview":
-      case "Offer":
+      case "INTERVIEW":
+      case "OFFER":
         return { bg: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main };
-      case "Applied":
+      case "APPLIED":
         return { bg: `${theme.palette.primary.main}1A`, color: theme.palette.primary.main };
-      case "Rejected":
+      case "REJECTED":
         return { bg: `${theme.palette.error.main}1A`, color: theme.palette.error.main };
       default:
         return { bg: `${theme.palette.text.secondary}1A`, color: theme.palette.text.secondary };
@@ -374,21 +324,7 @@ export default function JobApplicationsPage() {
           >
             {statusOptions.map((option) => (
               <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl size="small" sx={{ minWidth: { xs: "100%", sm: 150 } }}>
-          <InputLabel>Source</InputLabel>
-          <Select
-            value={sourceFilter}
-            label="Source"
-            onChange={(e) => setSourceFilter(e.target.value)}
-          >
-            {sourceOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
+                {option === "All Status" ? option : getStatusLabel(option)}
               </MenuItem>
             ))}
           </Select>
@@ -396,7 +332,17 @@ export default function JobApplicationsPage() {
       </Box>
 
       {/* Job List */}
-      {isMobile ? (
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress size={24} />
+        </Box>
+      ) : filteredJobs.length === 0 ? (
+        <Card sx={{ border: `1px solid ${theme.palette.divider}`, p: 4 }}>
+          <Typography variant="body2" color="text.secondary" align="center">
+            No job applications found.
+          </Typography>
+        </Card>
+      ) : isMobile ? (
         <Box>
           {filteredJobs.map((job) => (
             <JobCard key={job.id} job={job} />
@@ -437,7 +383,7 @@ export default function JobApplicationsPage() {
                       variant="subtitle1"
                       sx={{ fontWeight: 600, mb: 0.5, fontSize: "0.95rem" }}
                     >
-                      {job.title}
+                      {job.role}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -448,68 +394,20 @@ export default function JobApplicationsPage() {
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.25 }}>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <MapPin size={12} color={theme.palette.text.secondary} />
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ fontSize: "0.7rem" }}
-                        >
-                          {job.location}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <ExternalLink size={12} color={theme.palette.text.secondary} />
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ fontSize: "0.7rem" }}
-                        >
-                          {job.source}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                         <Calendar size={12} color={theme.palette.text.secondary} />
                         <Typography
                           variant="caption"
                           color="text.secondary"
                           sx={{ fontSize: "0.7rem" }}
                         >
-                          {job.date}
+                          Applied {formatDate(job.dateApplied)}
                         </Typography>
                       </Box>
                     </Box>
-                    {job.techStack.length > 0 && (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.75 }}>
-                        {job.techStack.slice(0, 4).map((tech) => (
-                          <Chip
-                            key={tech}
-                            label={tech}
-                            size="small"
-                            sx={{
-                              fontSize: "0.7rem",
-                              height: 22,
-                              bgcolor: theme.palette.background.default,
-                              border: `1px solid ${theme.palette.divider}`,
-                            }}
-                          />
-                        ))}
-                        {job.techStack.length > 4 && (
-                          <Chip
-                            label={`+${job.techStack.length - 4}`}
-                            size="small"
-                            sx={{
-                              fontSize: "0.7rem",
-                              height: 22,
-                              bgcolor: theme.palette.background.default,
-                            }}
-                          />
-                        )}
-                      </Box>
-                    )}
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Chip
-                      label={job.status}
+                      label={getStatusLabel(job.status)}
                       size="small"
                       sx={{
                         bgcolor: statusColors.bg,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -10,7 +10,6 @@ import {
   Typography,
   Button,
   Chip,
-  Avatar,
   IconButton,
   Select,
   MenuItem,
@@ -18,111 +17,88 @@ import {
   InputLabel,
   Divider,
   useTheme,
-  useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 import {
   ChevronLeft,
   ExternalLink,
   Pencil,
   Trash2,
-  MapPin,
   Calendar,
   Mail,
   Clock,
   CheckCircle2,
   FileText,
-  ChevronDown,
 } from "lucide-react";
 
-// Mock data for job application
-const mockJob = {
-  id: "1",
-  title: "Senior Frontend Engineer",
-  company: "Stripe",
-  location: "San Francisco, CA (Remote)",
-  source: "LinkedIn",
-  dateAdded: "3/9/2024",
-  status: "Interview",
-  techStack: ["React", "TypeScript", "GraphQL", "Node.js", "Ruby"],
-  seniority: "Senior",
-  employmentType: "Full-time",
-  roleSummary:
-    "Senior role focused on building and maintaining the Stripe Dashboard using React, TypeScript, and GraphQL. Strong emphasis on performance optimization and accessibility.",
-  originalDescription:
-    "We are looking for a Senior Frontend Engineer to join our Dashboard team. You'll be responsible for building and maintaining the Stripe Dashboard using React, TypeScript, and GraphQL. Strong emphasis on performance optimization and accessibility.",
-  resumeVersion: "Frontend-Focused Resume",
-  activities: [
-    {
-      id: "1",
-      type: "interview_request",
-      title: "Interview request received",
-      description: "Technical interview scheduled for next week",
-      date: "3/18/2024 09:00 AM",
-      icon: Mail,
-    },
-    {
-      id: "2",
-      type: "status_change",
-      title: "Status changed to Interview",
-      description: "Moved to interview stage after initial recruiter screen",
-      date: "3/15/2024 02:00 PM",
-      icon: Clock,
-    },
-    {
-      id: "3",
-      type: "confirmation",
-      title: "Application confirmation received",
-      description: "Received confirmation email from Stripe Recruiting",
-      date: "3/10/2024 11:00 AM",
-      icon: Mail,
-    },
-    {
-      id: "4",
-      type: "submitted",
-      title: "Application submitted",
-      description: "Submitted via LinkedIn Easy Apply with Frontend-Focused Resume",
-      date: "3/10/2024 10:30 AM",
-      icon: CheckCircle2,
-    },
-    {
-      id: "5",
-      type: "created",
-      title: "Job application created",
-      description: "Added Senior Frontend Engineer position at Stripe",
-      date: "3/10/2024 10:00 AM",
-      icon: FileText,
-    },
-  ],
-  emails: [
-    {
-      id: "1",
-      status: "Confirmation",
-      date: "3/10/2024",
-      subject: "Thank you for applying to Stripe",
-      preview: "Thank you for your interest in the Senior Frontend Engineer position...",
-      expanded: false,
-    },
-    {
-      id: "2",
-      status: "Interview",
-      date: "3/18/2024",
-      subject: "Interview Invitation - Senior Frontend Engineer at Stripe",
-      preview: "We were impressed by your background and would like to invite you...",
-      expanded: false,
-    },
-  ],
-};
+// API response types
+interface LinkedEmail {
+  id: string;
+  subject: string;
+  from: string;
+  preview: string;
+  receivedAt: string;
+}
+
+interface JobApplicationDetail {
+  id: string;
+  company: string;
+  role: string;
+  link: string;
+  dateApplied: string;
+  status: "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER";
+  createdAt: string;
+  updatedAt: string;
+  emails: LinkedEmail[];
+}
+
+// Timeline event type
+interface TimelineEvent {
+  id: string;
+  type: "applied" | "status" | "email";
+  title: string;
+  description: string;
+  date: Date;
+  dateDisplay: string;
+}
+
+// Helper to format date for display
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US");
+}
+
+function formatDateTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleString("en-US");
+}
+
+// Helper to get status display label
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case "APPLIED":
+      return "Applied";
+    case "INTERVIEW":
+      return "Interview";
+    case "OFFER":
+      return "Offer";
+    case "REJECTED":
+      return "Rejected";
+    default:
+      return status;
+  }
+}
 
 // Activity Icon Component
-function ActivityIcon({ type, Icon }: { type: string; Icon: any }) {
+function ActivityIcon({ type }: { type: string }) {
   const theme = useTheme();
   const iconColors: Record<string, string> = {
-    interview_request: theme.palette.secondary.main,
-    status_change: theme.palette.primary.main,
-    confirmation: theme.palette.secondary.main,
-    submitted: theme.palette.secondary.main,
-    created: theme.palette.text.secondary,
+    email: theme.palette.secondary.main,
+    status: theme.palette.primary.main,
+    applied: theme.palette.secondary.main,
   };
+
+  const Icon = type === "email" ? Mail : type === "status" ? Clock : CheckCircle2;
 
   return (
     <Box
@@ -144,22 +120,8 @@ function ActivityIcon({ type, Icon }: { type: string; Icon: any }) {
 }
 
 // Email Card Component
-function EmailCard({ email }: { email: (typeof mockJob.emails)[0] }) {
+function EmailCard({ email }: { email: LinkedEmail }) {
   const theme = useTheme();
-  const [expanded, setExpanded] = useState(email.expanded);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Interview":
-        return { bg: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main };
-      case "Confirmation":
-        return { bg: `${theme.palette.primary.main}1A`, color: theme.palette.primary.main };
-      default:
-        return { bg: `${theme.palette.text.secondary}1A`, color: theme.palette.text.secondary };
-    }
-  };
-
-  const statusColors = getStatusColor(email.status);
 
   return (
     <Card
@@ -172,19 +134,8 @@ function EmailCard({ email }: { email: (typeof mockJob.emails)[0] }) {
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.75 }}>
-              <Chip
-                label={email.status}
-                size="small"
-                sx={{
-                  bgcolor: statusColors.bg,
-                  color: statusColors.color,
-                  fontWeight: 500,
-                  height: 20,
-                  fontSize: "0.7rem",
-                }}
-              />
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem" }}>
-                {email.date}
+                {formatDate(email.receivedAt)}
               </Typography>
             </Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5, fontSize: "0.85rem" }}>
@@ -194,45 +145,121 @@ function EmailCard({ email }: { email: (typeof mockJob.emails)[0] }) {
               {email.preview}
             </Typography>
           </Box>
-          <IconButton
-            size="small"
-            onClick={() => setExpanded(!expanded)}
-            sx={{
-              transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 0.2s",
-            }}
-          >
-            <ChevronDown size={16} />
-          </IconButton>
         </Box>
       </CardContent>
     </Card>
   );
 }
 
-export default function JobApplicationDetailPage({ params }: { params: { id: string } }) {
+export default function JobApplicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const theme = useTheme();
   const router = useRouter();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const job = mockJob; // In real app, fetch by params.id
+  const { id } = use(params);
+  const [job, setJob] = useState<JobApplicationDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  const getInitials = (name: string) => name.charAt(0).toUpperCase();
+  useEffect(() => {
+    async function fetchJob() {
+      try {
+        const res = await fetch(`/api/admin/job-applications/${id}`);
+        if (res.ok) {
+          const data: JobApplicationDetail = await res.json();
+          setJob(data);
+          setSelectedStatus(data.status);
+        } else if (res.status === 404) {
+          router.push("/job-applications");
+        }
+      } catch (err) {
+        console.error("Failed to fetch job application:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchJob();
+  }, [id, router]);
+
+  // Build timeline from job data
+  const buildTimeline = (job: JobApplicationDetail): TimelineEvent[] => {
+    const events: TimelineEvent[] = [];
+
+    // Add application event
+    events.push({
+      id: "applied",
+      type: "applied",
+      title: "Application submitted",
+      description: `Applied for ${job.role} at ${job.company}`,
+      date: new Date(job.dateApplied),
+      dateDisplay: formatDateTime(job.dateApplied),
+    });
+
+    // Add status update if updatedAt differs from dateApplied
+    const dateApplied = new Date(job.dateApplied);
+    const updatedAt = new Date(job.updatedAt);
+    if (updatedAt.getTime() - dateApplied.getTime() > 60000) {
+      // More than 1 minute difference
+      events.push({
+        id: "status",
+        type: "status",
+        title: `Status: ${getStatusLabel(job.status)}`,
+        description: `Application status updated`,
+        date: updatedAt,
+        dateDisplay: formatDateTime(job.updatedAt),
+      });
+    }
+
+    // Add email events
+    for (const email of job.emails) {
+      events.push({
+        id: `email-${email.id}`,
+        type: "email",
+        title: email.subject,
+        description: `Email from ${email.from}`,
+        date: new Date(email.receivedAt),
+        dateDisplay: formatDateTime(email.receivedAt),
+      });
+    }
+
+    // Sort by date descending (most recent first)
+    events.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    return events;
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Interview":
-      case "Offer":
+      case "INTERVIEW":
+      case "OFFER":
         return { bg: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main };
-      case "Applied":
+      case "APPLIED":
         return { bg: `${theme.palette.primary.main}1A`, color: theme.palette.primary.main };
-      case "Rejected":
+      case "REJECTED":
         return { bg: `${theme.palette.error.main}1A`, color: theme.palette.error.main };
       default:
         return { bg: `${theme.palette.text.secondary}1A`, color: theme.palette.text.secondary };
     }
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
+
+  if (!job) {
+    return (
+      <Box sx={{ py: 4 }}>
+        <Typography variant="body2" color="text.secondary" align="center">
+          Job application not found.
+        </Typography>
+      </Box>
+    );
+  }
+
   const statusColors = getStatusColor(job.status);
+  const timeline = buildTimeline(job);
 
   return (
     <Box>
@@ -270,10 +297,10 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
                   fontSize: { xs: "1.3rem", sm: "1.7rem" },
                 }}
               >
-                {job.title}
+                {job.role}
               </Typography>
               <Chip
-                label={job.status}
+                label={getStatusLabel(job.status)}
                 sx={{
                   bgcolor: statusColors.bg,
                   color: statusColors.color,
@@ -288,21 +315,9 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                <MapPin size={16} color={theme.palette.text.secondary} />
-                <Typography variant="body2" color="text.secondary">
-                  {job.location}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                <ExternalLink size={16} color={theme.palette.text.secondary} />
-                <Typography variant="body2" color="text.secondary">
-                  {job.source}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 <Calendar size={16} color={theme.palette.text.secondary} />
                 <Typography variant="body2" color="text.secondary">
-                  Added {job.dateAdded}
+                  Applied {formatDate(job.dateApplied)}
                 </Typography>
               </Box>
             </Box>
@@ -311,6 +326,10 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
             <Button
               variant="outlined"
               startIcon={<ExternalLink size={16} />}
+              component="a"
+              href={job.link}
+              target="_blank"
+              rel="noopener noreferrer"
               sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
             >
               View Listing
@@ -339,86 +358,35 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
       >
         {/* Left Column */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {/* Job Summary */}
-          <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
-            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
-                Job Summary
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {job.roleSummary}
-              </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                  Tech Stack:
-                </Typography>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {job.techStack.map((tech) => (
-                    <Chip
-                      key={tech}
-                      label={tech}
-                      size="small"
-                      sx={{
-                        bgcolor: theme.palette.background.default,
-                        border: `1px solid ${theme.palette.divider}`,
-                      }}
-                    />
-                  ))}
-                </Box>
-              </Box>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                  gap: 1,
-                }}
-              >
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Seniority:
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {job.seniority}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Employment Type:
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {job.employmentType}
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-
           {/* Activity Timeline */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
                 Activity Timeline
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {job.activities.map((activity, index) => {
-                  const Icon = activity.icon;
-                  return (
-                    <Box key={activity.id}>
+              {timeline.length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  No activity yet.
+                </Typography>
+              ) : (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  {timeline.map((event, index) => (
+                    <Box key={event.id}>
                       <Box sx={{ display: "flex", gap: 2 }}>
-                        <ActivityIcon type={activity.type} Icon={Icon} />
+                        <ActivityIcon type={event.type} />
                         <Box sx={{ flex: 1 }}>
                           <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                            {activity.title}
+                            {event.title}
                           </Typography>
                           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                            {activity.description}
+                            {event.description}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {activity.date}
+                            {event.dateDisplay}
                           </Typography>
                         </Box>
                       </Box>
-                      {index < job.activities.length - 1 && (
+                      {index < timeline.length - 1 && (
                         <Box
                           sx={{
                             ml: 2,
@@ -430,9 +398,9 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
                         />
                       )}
                     </Box>
-                  );
-                })}
-              </Box>
+                  ))}
+                </Box>
+              )}
             </CardContent>
           </Card>
 
@@ -442,12 +410,16 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                 <Mail size={18} color={theme.palette.text.secondary} />
                 <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1rem" }}>
-                  Related Emails ({job.emails.length})
+                  Linked Emails ({job.emails.length})
                 </Typography>
               </Box>
-              {job.emails.map((email) => (
-                <EmailCard key={email.id} email={email} />
-              ))}
+              {job.emails.length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  No emails linked to this application.
+                </Typography>
+              ) : (
+                job.emails.map((email) => <EmailCard key={email.id} email={email} />)
+              )}
             </CardContent>
           </Card>
         </Box>
@@ -463,34 +435,42 @@ export default function JobApplicationDetailPage({ params }: { params: { id: str
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Update Status</InputLabel>
-                  <Select label="Update Status" value={job.status}>
-                    <MenuItem value="Not Applied">Not Applied</MenuItem>
-                    <MenuItem value="Applied">Applied</MenuItem>
-                    <MenuItem value="Interview">Interview</MenuItem>
-                    <MenuItem value="Offer">Offer</MenuItem>
-                    <MenuItem value="Rejected">Rejected</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Resume Version</InputLabel>
-                  <Select label="Resume Version" value={job.resumeVersion}>
-                    <MenuItem value="Frontend-Focused Resume">Frontend-Focused Resume</MenuItem>
-                    <MenuItem value="Full-Stack Resume">Full-Stack Resume</MenuItem>
-                    <MenuItem value="General Resume">General Resume</MenuItem>
+                  <Select
+                    label="Update Status"
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                  >
+                    <MenuItem value="APPLIED">Applied</MenuItem>
+                    <MenuItem value="INTERVIEW">Interview</MenuItem>
+                    <MenuItem value="OFFER">Offer</MenuItem>
+                    <MenuItem value="REJECTED">Rejected</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
             </CardContent>
           </Card>
 
-          {/* Original Description */}
+          {/* Job Link */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
-                Original Description
+                Job Listing
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {job.originalDescription}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  wordBreak: "break-all",
+                }}
+              >
+                <a
+                  href={job.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: theme.palette.primary.main }}
+                >
+                  {job.link}
+                </a>
               </Typography>
             </CardContent>
           </Card>

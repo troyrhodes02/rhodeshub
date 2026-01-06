@@ -15,6 +15,11 @@ export async function GET() {
   try {
     const messages = await prisma.emailMessage.findMany({
       orderBy: { receivedAt: "desc" },
+      include: {
+        jobApplication: {
+          select: { id: true, company: true, role: true },
+        },
+      },
     });
 
     return NextResponse.json(messages, { status: 200 });

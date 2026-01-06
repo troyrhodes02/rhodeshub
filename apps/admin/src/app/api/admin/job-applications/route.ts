@@ -12,6 +12,65 @@ interface CreateJobApplicationBody {
   status: string;
 }
 
+export interface JobApplicationListItem {
+  id: string;
+  company: string;
+  role: string;
+  link: string;
+  dateApplied: string;
+  status: JobApplicationStatus;
+  createdAt: string;
+  updatedAt: string;
+  lastActivityAt: string;
+  latestEmailReceivedAt?: string;
+}
+
+export async function GET() {
+  try {
+    const jobApplications = await prisma.jobApplication.findMany({
+      include: {
+        emails: {
+          take: 1,
+          orderBy: { receivedAt: "desc" },
+          select: { receivedAt: true },
+        },
+      },
+    });
+
+    // Compute lastActivityAt and format response
+    const items: JobApplicationListItem[] = jobApplications.map((job) => {
+      const latestEmailReceivedAt = job.emails[0]?.receivedAt;
+      const lastActivityAt =
+        latestEmailReceivedAt && latestEmailReceivedAt > job.updatedAt
+          ? latestEmailReceivedAt
+          : job.updatedAt;
+
+      return {
+        id: job.id,
+        company: job.company,
+        role: job.role,
+        link: job.link,
+        dateApplied: job.dateApplied.toISOString(),
+        status: job.status as JobApplicationStatus,
+        createdAt: job.createdAt.toISOString(),
+        updatedAt: job.updatedAt.toISOString(),
+        lastActivityAt: lastActivityAt.toISOString(),
+        latestEmailReceivedAt: latestEmailReceivedAt?.toISOString(),
+      };
+    });
+
+    // Sort by lastActivityAt descending
+    items.sort(
+      (a, b) => new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime()
+    );
+
+    return NextResponse.json(items, { status: 200 });
+  } catch (err) {
+    console.error("Fetch JobApplications failed:", err);
+    return NextResponse.json({ error: "Failed to fetch job applications" }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body: CreateJobApplicationBody = await req.json();

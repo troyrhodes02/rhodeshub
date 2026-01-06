@@ -20,12 +20,7 @@ function isClassifyById(body: ClassifyRequestBody): body is ClassifyByIdPayload 
 }
 
 function isClassifyByContent(body: ClassifyRequestBody): body is ClassifyByContentPayload {
-  return (
-    "subject" in body &&
-    "from" in body &&
-    "preview" in body &&
-    "body" in body
-  );
+  return "subject" in body && "from" in body && "preview" in body && "body" in body;
 }
 
 export async function POST(req: NextRequest) {
@@ -70,7 +65,9 @@ export async function POST(req: NextRequest) {
 
       if (!subject || !from || !preview || !emailBody) {
         return NextResponse.json(
-          { error: "Missing required fields: subject, from, preview, body (all must be non-empty)" },
+          {
+            error: "Missing required fields: subject, from, preview, body (all must be non-empty)",
+          },
           { status: 400 }
         );
       }
@@ -95,4 +92,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to classify email" }, { status: 500 });
   }
 }
-

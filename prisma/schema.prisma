@@ -23,18 +23,25 @@ model JobApplication {
 
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
+
+  emails      EmailMessage[]
 }
 
 model EmailMessage {
-  id          String   @id @default(cuid())
-  externalId  String   @unique
-  from        String
-  to          String
-  subject     String
-  preview     String
-  body        String
-  receivedAt  DateTime
+  id               String   @id @default(cuid())
+  externalId       String   @unique
+  from             String
+  to               String
+  subject          String
+  preview          String
+  body             String
+  receivedAt       DateTime
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  jobApplicationId String?
+  jobApplication   JobApplication? @relation(fields: [jobApplicationId], references: [id])
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([jobApplicationId])
 }
