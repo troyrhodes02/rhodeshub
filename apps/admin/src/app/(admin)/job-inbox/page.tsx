@@ -34,12 +34,29 @@ import {
   ChevronUp,
   X,
   CheckCircle2,
-  Sparkles,
   Unlink,
   AlertTriangle,
+  Building2,
+  Briefcase,
+  Calendar,
+  ArrowRight,
 } from "lucide-react";
 
-// EmailMessage shape from API (with jobApplication included)
+// Extracted signals shape from API
+interface ExtractedDate {
+  iso: string;
+  raw: string;
+  kind: "interview" | "deadline" | "start" | "other";
+}
+
+interface ExtractedSignals {
+  company: string | null;
+  role: string | null;
+  dates: ExtractedDate[];
+  nextStepIndicators: string[];
+}
+
+// EmailMessage shape from API (with jobApplication and classification fields)
 interface JobApplicationMinimal {
   id: string;
   company: string;
@@ -59,12 +76,19 @@ interface EmailMessageFromApi {
   updatedAt: string;
   jobApplicationId: string | null;
   jobApplication: JobApplicationMinimal | null;
+  // Classification fields (persisted)
+  classificationLabel: string;
+  classificationConfidence: number | null;
+  extractedSignals: ExtractedSignals | null;
+  classifiedAt: string | null;
 }
 
 // UI email shape (with display-only fields)
 interface DisplayEmail {
   id: string;
-  type: string;
+  type: string; // Display-friendly label (e.g., "Confirmation")
+  typeRaw: string; // Raw enum value from DB (e.g., "CONFIRMATION")
+  confidence: number | null;
   company: string;
   date: string;
   subject: string;
@@ -76,6 +100,8 @@ interface DisplayEmail {
   body: string;
   timestamp: string;
   needsReview: boolean;
+  extractedSignals: ExtractedSignals | null;
+  classifiedAt: string | null;
 }
 
 // Job application list item for dropdown
@@ -85,11 +111,32 @@ interface JobApplicationOption {
   role: string;
 }
 
-// Helper to extract company name from email address
+// Map Prisma enum values to display-friendly strings
+function mapEnumToDisplayLabel(label: string): string {
+  switch (label) {
+    case "OFFER":
+      return "Offer";
+    case "REJECTION":
+      return "Rejection";
+    case "INTERVIEW":
+      return "Interview";
+    case "CONFIRMATION":
+      return "Confirmation";
+    case "UNCLASSIFIED":
+    default:
+      return "Unclassified";
+  }
+}
+
+// Helper to extract company name from email address (fallback only)
 function extractCompanyFromEmail(email: string): string {
   const match = email.match(/@([^.]+)/);
   if (match && match[1]) {
-    return match[1].charAt(0).toUpperCase() + match[1].slice(1);
+    const domain = match[1].toLowerCase();
+    const genericDomains = ["gmail", "yahoo", "outlook", "hotmail", "icloud", "aol", "mail"];
+    if (!genericDomains.includes(domain)) {
+      return domain.charAt(0).toUpperCase() + domain.slice(1);
+    }
   }
   return "Unknown";
 }
@@ -112,10 +159,16 @@ function mapEmailToDisplay(email: EmailMessageFromApi): DisplayEmail {
     ? `${email.jobApplication.company} — ${email.jobApplication.role}`
     : "Not linked";
 
+  // Use extracted signals company if available, otherwise fallback to email domain
+  const company =
+    email.extractedSignals?.company || extractCompanyFromEmail(email.from);
+
   return {
     id: email.id,
-    type: "Unclassified",
-    company: extractCompanyFromEmail(email.from),
+    type: mapEnumToDisplayLabel(email.classificationLabel),
+    typeRaw: email.classificationLabel,
+    confidence: email.classificationConfidence,
+    company,
     date: formatDate(email.receivedAt),
     subject: email.subject,
     from: email.from,
@@ -126,6 +179,8 @@ function mapEmailToDisplay(email: EmailMessageFromApi): DisplayEmail {
     body: email.body,
     timestamp: formatTimestamp(email.receivedAt),
     needsReview: false,
+    extractedSignals: email.extractedSignals,
+    classifiedAt: email.classifiedAt,
   };
 }
 
@@ -175,6 +230,96 @@ function SummaryCard({
   );
 }
 
+// Extracted Signals Display Component
+function ExtractedSignalsDisplay({ signals }: { signals: ExtractedSignals | null }) {
+  const theme = useTheme();
+
+  if (!signals) {
+    return (
+      <Box sx={{ py: 1 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: "italic" }}>
+          No extracted signals available. Run analysis via API to populate.
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+        gap: 2,
+      }}
+    >
+      {/* Company */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <Building2 size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Company
+          </Typography>
+          <Typography variant="body2">{signals.company || "—"}</Typography>
+        </Box>
+      </Box>
+
+      {/* Role */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <Briefcase size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Role
+          </Typography>
+          <Typography variant="body2">{signals.role || "—"}</Typography>
+        </Box>
+      </Box>
+
+      {/* Dates */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <Calendar size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Dates
+          </Typography>
+          {signals.dates.length > 0 ? (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.5 }}>
+              {signals.dates.map((d, i) => (
+                <Chip
+                  key={i}
+                  label={`${d.iso} (${d.kind})`}
+                  size="small"
+                  sx={{
+                    height: 20,
+                    fontSize: "0.7rem",
+                    bgcolor: theme.palette.background.default,
+                  }}
+                />
+              ))}
+            </Box>
+          ) : (
+            <Typography variant="body2">—</Typography>
+          )}
+        </Box>
+      </Box>
+
+      {/* Next Steps */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <ArrowRight size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Next Steps
+          </Typography>
+          {signals.nextStepIndicators.length > 0 ? (
+            <Typography variant="body2">{signals.nextStepIndicators.join(", ")}</Typography>
+          ) : (
+            <Typography variant="body2">—</Typography>
+          )}
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
 // Email Card Component
 function EmailCard({
   email,
@@ -205,6 +350,10 @@ function EmailCard({
   };
 
   const typeColors = getTypeColor(email.type);
+
+  // Format confidence as percentage
+  const confidenceDisplay =
+    email.confidence !== null ? `${Math.round(email.confidence * 100)}%` : null;
 
   const handleLinkChange = async (newJobId: string) => {
     setIsLinking(true);
@@ -245,6 +394,7 @@ function EmailCard({
               mb: 1.5,
             }}
           >
+            {/* Classification Label Chip */}
             <Chip
               label={email.type}
               size="small"
@@ -256,6 +406,20 @@ function EmailCard({
                 fontSize: "0.7rem",
               }}
             />
+            {/* Confidence Indicator */}
+            {confidenceDisplay && (
+              <Chip
+                label={confidenceDisplay}
+                size="small"
+                sx={{
+                  bgcolor: theme.palette.background.default,
+                  border: `1px solid ${theme.palette.divider}`,
+                  fontWeight: 500,
+                  height: 22,
+                  fontSize: "0.65rem",
+                }}
+              />
+            )}
             {email.needsReview && (
               <Chip
                 icon={<AlertTriangle size={12} />}
@@ -324,6 +488,7 @@ function EmailCard({
           }}
         >
           <CardContent sx={{ p: { xs: 1.5, sm: 2.5 } }}>
+            {/* Email Details Grid */}
             <Box
               sx={{
                 display: "grid",
@@ -357,6 +522,29 @@ function EmailCard({
                 <Typography variant="body2">{email.linkedJob}</Typography>
               </Box>
             </Box>
+
+            {/* Extracted Signals Section */}
+            <Box sx={{ mb: 3 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 600, mb: 1.5, display: "flex", alignItems: "center", gap: 1 }}
+              >
+                Extracted Signals
+                {email.classifiedAt && (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ fontWeight: 400 }}
+                  >
+                    (analyzed {formatTimestamp(email.classifiedAt)})
+                  </Typography>
+                )}
+              </Typography>
+              <ExtractedSignalsDisplay signals={email.extractedSignals} />
+            </Box>
+
+            <Divider sx={{ mb: 3 }} />
 
             {/* Manual Job Link Dropdown */}
             <Box sx={{ mb: 3 }}>
@@ -503,7 +691,6 @@ export default function JobInboxPage() {
   const [emails, setEmails] = useState<DisplayEmail[]>([]);
   const [jobOptions, setJobOptions] = useState<JobApplicationOption[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isClassifying, setIsClassifying] = useState(false);
   const [isMatching, setIsMatching] = useState(false);
 
   // Fetch emails and job applications
@@ -549,47 +736,13 @@ export default function JobInboxPage() {
     return matchesSearch && matchesFilter;
   });
 
-  // Compute summary stats from loaded emails
+  // Compute summary stats from loaded emails (using persisted labels)
   const summaryStats = {
     total: emails.length,
     confirmations: emails.filter((e) => e.type === "Confirmation").length,
     interviews: emails.filter((e) => e.type === "Interview").length,
     offers: emails.filter((e) => e.type === "Offer").length,
     rejections: emails.filter((e) => e.type === "Rejection").length,
-  };
-
-  // Classify all emails using the classification API
-  const handleClassifyEmails = async () => {
-    if (emails.length === 0 || isClassifying) return;
-
-    setIsClassifying(true);
-
-    // Create a copy of emails to update
-    const updatedEmails = [...emails];
-
-    // Classify each email
-    for (let i = 0; i < updatedEmails.length; i++) {
-      const email = updatedEmails[i];
-      try {
-        const res = await fetch("/api/admin/job-inbox/classify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ emailId: email.id }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          updatedEmails[i] = { ...email, type: data.label };
-        } else {
-          console.error(`Failed to classify email ${email.id}: HTTP ${res.status}`);
-        }
-      } catch (err) {
-        console.error(`Failed to classify email ${email.id}:`, err);
-      }
-    }
-
-    setEmails(updatedEmails);
-    setIsClassifying(false);
   };
 
   // Match emails to jobs
@@ -695,19 +848,10 @@ export default function JobInboxPage() {
             Job Email Inbox
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
-            View and classify job-related emails
+            View job-related emails with classification and extracted signals
           </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-          <Button
-            variant="contained"
-            startIcon={<Sparkles size={18} />}
-            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
-            onClick={handleClassifyEmails}
-            disabled={isClassifying || emails.length === 0}
-          >
-            {isClassifying ? "Classifying..." : "Classify Emails"}
-          </Button>
           <Button
             variant="contained"
             startIcon={<LinkIcon size={18} />}

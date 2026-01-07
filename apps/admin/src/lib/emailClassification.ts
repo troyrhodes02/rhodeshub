@@ -3,7 +3,13 @@
  * Classifies job-related emails into predefined categories using keyword matching.
  */
 
-export type EmailClassificationLabel =
+import { EmailClassificationLabel } from "@prisma/client";
+
+// Re-export the Prisma enum for convenience
+export { EmailClassificationLabel };
+
+// Legacy type alias for backward compatibility (maps to Prisma enum values)
+export type EmailClassificationLabelLegacy =
   | "Unclassified"
   | "Confirmation"
   | "Interview"
@@ -17,8 +23,9 @@ interface ClassifyEmailInput {
   body: string;
 }
 
-interface ClassifyEmailResult {
+export interface ClassifyEmailResult {
   label: EmailClassificationLabel;
+  confidence: number;
 }
 
 // Keyword sets for each category (lowercase for case-insensitive matching)
@@ -93,11 +100,11 @@ function containsKeyword(text: string, keywords: string[]): boolean {
  * Classifies an email into a predefined category based on keyword matching.
  *
  * Priority order (highest to lowest):
- * 1. Offer
- * 2. Rejection
- * 3. Interview
- * 4. Confirmation
- * 5. Unclassified (default)
+ * 1. Offer (confidence: 0.9)
+ * 2. Rejection (confidence: 0.9)
+ * 3. Interview (confidence: 0.8)
+ * 4. Confirmation (confidence: 0.7)
+ * 5. Unclassified (confidence: 0.3)
  *
  * This ensures deterministic results when multiple categories could match.
  */
@@ -107,22 +114,62 @@ export function classifyEmail(input: ClassifyEmailInput): ClassifyEmailResult {
 
   // Check in priority order: Offer > Rejection > Interview > Confirmation > Unclassified
   if (containsKeyword(combinedText, OFFER_KEYWORDS)) {
-    return { label: "Offer" };
+    return { label: EmailClassificationLabel.OFFER, confidence: 0.9 };
   }
 
   if (containsKeyword(combinedText, REJECTION_KEYWORDS)) {
-    return { label: "Rejection" };
+    return { label: EmailClassificationLabel.REJECTION, confidence: 0.9 };
   }
 
   if (containsKeyword(combinedText, INTERVIEW_KEYWORDS)) {
-    return { label: "Interview" };
+    return { label: EmailClassificationLabel.INTERVIEW, confidence: 0.8 };
   }
 
   if (containsKeyword(combinedText, CONFIRMATION_KEYWORDS)) {
-    return { label: "Confirmation" };
+    return { label: EmailClassificationLabel.CONFIRMATION, confidence: 0.7 };
   }
 
-  return { label: "Unclassified" };
+  return { label: EmailClassificationLabel.UNCLASSIFIED, confidence: 0.3 };
 }
 
+/**
+ * Maps legacy label strings to Prisma enum values.
+ * Useful for backward compatibility with existing code.
+ */
+export function mapLegacyLabelToEnum(
+  legacy: EmailClassificationLabelLegacy
+): EmailClassificationLabel {
+  switch (legacy) {
+    case "Offer":
+      return EmailClassificationLabel.OFFER;
+    case "Rejection":
+      return EmailClassificationLabel.REJECTION;
+    case "Interview":
+      return EmailClassificationLabel.INTERVIEW;
+    case "Confirmation":
+      return EmailClassificationLabel.CONFIRMATION;
+    case "Unclassified":
+    default:
+      return EmailClassificationLabel.UNCLASSIFIED;
+  }
+}
 
+/**
+ * Maps Prisma enum values to display-friendly strings.
+ * Useful for UI rendering.
+ */
+export function mapEnumToDisplayLabel(label: EmailClassificationLabel): string {
+  switch (label) {
+    case EmailClassificationLabel.OFFER:
+      return "Offer";
+    case EmailClassificationLabel.REJECTION:
+      return "Rejection";
+    case EmailClassificationLabel.INTERVIEW:
+      return "Interview";
+    case EmailClassificationLabel.CONFIRMATION:
+      return "Confirmation";
+    case EmailClassificationLabel.UNCLASSIFIED:
+    default:
+      return "Unclassified";
+  }
+}

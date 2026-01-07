@@ -13,6 +13,14 @@ enum JobApplicationStatus {
   OFFER
 }
 
+enum EmailClassificationLabel {
+  UNCLASSIFIED
+  CONFIRMATION
+  INTERVIEW
+  OFFER
+  REJECTION
+}
+
 model JobApplication {
   id          String               @id @default(cuid())
   company     String
@@ -39,6 +47,11 @@ model EmailMessage {
 
   jobApplicationId String?
   jobApplication   JobApplication? @relation(fields: [jobApplicationId], references: [id])
+
+  classificationLabel      EmailClassificationLabel @default(UNCLASSIFIED)
+  classificationConfidence Float?
+  extractedSignals         Json?
+  classifiedAt             DateTime?
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
