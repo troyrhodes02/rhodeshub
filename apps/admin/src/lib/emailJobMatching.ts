@@ -134,3 +134,5 @@ export function matchEmailToJobs(email: EmailData, jobs: JobApplicationData[]): 
 
   return { type: "unmatched" };
 }
+
+
