@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Box,
   Card,
@@ -22,6 +23,7 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 import {
   Search,
@@ -33,157 +35,159 @@ import {
   ChevronUp,
   X,
   CheckCircle2,
+  Unlink,
+  AlertTriangle,
+  Building2,
+  Briefcase,
+  Calendar,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 
-// Mock email data
-const mockEmails = [
-  {
-    id: "1",
-    type: "Confirmation",
-    company: "Stripe",
-    date: "3/10/2024",
-    subject: "Thank you for applying to Stripe",
-    from: "recruiting@stripe.com",
-    to: "william@example.com",
-    preview: "Thank you for your interest in the Senior Frontend Engineer position...",
-    linkedJob: "Senior Frontend Engineer at Stripe",
-    body: `Hi William,
+// Extracted signals shape from API
+interface ExtractedDate {
+  iso: string;
+  raw: string;
+  kind: "interview" | "deadline" | "start" | "other";
+}
 
-Thank you for your interest in the Senior Frontend Engineer position at Stripe.
+interface ExtractedSignals {
+  company: string | null;
+  role: string | null;
+  dates: ExtractedDate[];
+  nextStepIndicators: string[];
+}
 
-We have received your application and our team is currently reviewing it. We receive many applications for each role, so this process may take some time.
+// EmailMessage shape from API (with jobApplication and classification fields)
+interface JobApplicationMinimal {
+  id: string;
+  company: string;
+  role: string;
+}
 
-If your background is a match for this role, a member of our recruiting team will reach out to you directly.
+interface EmailMessageFromApi {
+  id: string;
+  externalId: string;
+  from: string;
+  to: string;
+  subject: string;
+  preview: string;
+  body: string;
+  receivedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  jobApplicationId: string | null;
+  jobApplication: JobApplicationMinimal | null;
+  // Classification fields (persisted)
+  classificationLabel: string;
+  classificationConfidence: number | null;
+  extractedSignals: ExtractedSignals | null;
+  classifiedAt: string | null;
+}
 
-Best regards,
-Stripe Recruiting Team`,
-    timestamp: "3/10/2024, 11:00:00 AM",
-  },
-  {
-    id: "2",
-    type: "Interview",
-    company: "Stripe",
-    date: "3/18/2024",
-    subject: "Interview Invitation - Senior Frontend Engineer at Stripe",
-    from: "sarah@stripe.com",
-    to: "william@example.com",
-    preview: "We were impressed by your background and would like to invite you...",
-    linkedJob: "Senior Frontend Engineer at Stripe",
-    body: `Hi William,
+// UI email shape (with display-only fields)
+interface DisplayEmail {
+  id: string;
+  type: string; // Display-friendly label (e.g., "Confirmation")
+  typeRaw: string; // Raw enum value from DB (e.g., "CONFIRMATION")
+  confidence: number | null;
+  company: string;
+  date: string;
+  subject: string;
+  from: string;
+  to: string;
+  preview: string;
+  linkedJob: string;
+  linkedJobId: string | null;
+  body: string;
+  timestamp: string;
+  needsReview: boolean;
+  extractedSignals: ExtractedSignals | null;
+  classifiedAt: string | null;
+}
 
-We were impressed by your background and would like to invite you to interview for the Senior Frontend Engineer position at Stripe.
+// Job application list item for dropdown
+interface JobApplicationOption {
+  id: string;
+  company: string;
+  role: string;
+}
 
-Please let us know your availability for the following dates:
-- Monday, March 25th
-- Wednesday, March 27th
-- Friday, March 29th
+// Map Prisma enum values to display-friendly strings
+function mapEnumToDisplayLabel(label: string): string {
+  switch (label) {
+    case "OFFER":
+      return "Offer";
+    case "REJECTION":
+      return "Rejection";
+    case "INTERVIEW":
+      return "Interview";
+    case "CONFIRMATION":
+      return "Confirmation";
+    case "UNCLASSIFIED":
+    default:
+      return "Unclassified";
+  }
+}
 
-Looking forward to speaking with you!
+// Helper to extract company name from email address (fallback only)
+function extractCompanyFromEmail(email: string): string {
+  const match = email.match(/@([^.]+)/);
+  if (match && match[1]) {
+    const domain = match[1].toLowerCase();
+    const genericDomains = ["gmail", "yahoo", "outlook", "hotmail", "icloud", "aol", "mail"];
+    if (!genericDomains.includes(domain)) {
+      return domain.charAt(0).toUpperCase() + domain.slice(1);
+    }
+  }
+  return "Unknown";
+}
 
-Best,
-Sarah
-Stripe Recruiting`,
-    timestamp: "3/18/2024, 09:00:00 AM",
-  },
-  {
-    id: "3",
-    type: "Rejection",
-    company: "Notion",
-    date: "3/20/2024",
-    subject: "Update on your application to Notion",
-    from: "careers@notion.so",
-    to: "william@example.com",
-    preview:
-      "After careful consideration, we have decided to move forward with other candidates...",
-    linkedJob: "Full-Stack Engineer at Notion",
-    body: `Hi William,
+// Helper to format date for display
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US");
+}
 
-Thank you for your interest in the Full-Stack Engineer position at Notion.
+// Helper to format timestamp for display
+function formatTimestamp(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleString("en-US");
+}
 
-After careful consideration, we have decided to move forward with other candidates whose experience more closely matches our current needs.
+// Map API EmailMessage to display shape
+function mapEmailToDisplay(email: EmailMessageFromApi): DisplayEmail {
+  const linkedJob = email.jobApplication
+    ? `${email.jobApplication.company} — ${email.jobApplication.role}`
+    : "Not linked";
 
-We appreciate the time you took to apply and wish you the best in your job search.
+  // Use extracted signals company if available, otherwise fallback to email domain
+  const company =
+    email.extractedSignals?.company || extractCompanyFromEmail(email.from);
 
-Best regards,
-Notion Careers Team`,
-    timestamp: "3/20/2024, 02:30:00 PM",
-  },
-  {
-    id: "4",
-    type: "Offer",
-    company: "Supabase",
-    date: "3/22/2024",
-    subject: "Offer Letter - Developer Experience Engineer at Supabase",
-    from: "paul@supabase.com",
-    to: "william@example.com",
-    preview: "We are thrilled to extend an offer for the Developer Experience Engineer position...",
-    linkedJob: "Developer Experience Engineer at Supabase",
-    body: `Hi William,
-
-We are thrilled to extend an offer for the Developer Experience Engineer position at Supabase!
-
-We were impressed by your technical skills and passion for developer tools. We believe you would be a great addition to our team.
-
-Please find the offer details attached. We look forward to hearing from you soon.
-
-Best regards,
-Paul
-Supabase Team`,
-    timestamp: "3/22/2024, 10:15:00 AM",
-  },
-  {
-    id: "5",
-    type: "Confirmation",
-    company: "Vercel",
-    date: "3/11/2024",
-    subject: "Application Received - Software Engineer, Platform",
-    from: "careers@vercel.com",
-    to: "william@example.com",
-    preview: "Thank you for applying to Vercel. We have received your application...",
-    linkedJob: "Software Engineer, Platform at Vercel",
-    body: `Hi William,
-
-Thank you for applying to Vercel. We have received your application for the Software Engineer, Platform position.
-
-Our team will review your application and get back to you within the next few weeks.
-
-Best,
-Vercel Careers`,
-    timestamp: "3/11/2024, 03:45:00 PM",
-  },
-  {
-    id: "6",
-    type: "Interview",
-    company: "Linear",
-    date: "3/14/2024",
-    subject: "Next Steps - Frontend Engineer Position",
-    from: "hiring@linear.app",
-    to: "william@example.com",
-    preview: "We'd like to schedule a technical interview for the Frontend Engineer role...",
-    linkedJob: "Frontend Engineer at Linear",
-    body: `Hi William,
-
-We'd like to schedule a technical interview for the Frontend Engineer role at Linear.
-
-Please let us know your availability for next week.
-
-Thanks,
-Linear Hiring Team`,
-    timestamp: "3/14/2024, 11:20:00 AM",
-  },
-];
-
-// Summary stats
-const summaryStats = {
-  total: 6,
-  confirmations: 2,
-  interviews: 1,
-  offers: 1,
-  rejections: 1,
-};
+  return {
+    id: email.id,
+    type: mapEnumToDisplayLabel(email.classificationLabel),
+    typeRaw: email.classificationLabel,
+    confidence: email.classificationConfidence,
+    company,
+    date: formatDate(email.receivedAt),
+    subject: email.subject,
+    from: email.from,
+    to: email.to,
+    preview: email.preview,
+    linkedJob,
+    linkedJobId: email.jobApplicationId,
+    body: email.body,
+    timestamp: formatTimestamp(email.receivedAt),
+    needsReview: false,
+    extractedSignals: email.extractedSignals,
+    classifiedAt: email.classifiedAt,
+  };
+}
 
 // Filter options
-const filterOptions = ["All", "Confirmation", "Interview", "Offer", "Rejection"];
+const filterOptions = ["All", "Unclassified", "Confirmation", "Interview", "Offer", "Rejection"];
 
 // Summary Card Component
 function SummaryCard({
@@ -228,10 +232,120 @@ function SummaryCard({
   );
 }
 
-// Email Card Component
-function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
+// Extracted Signals Display Component
+function ExtractedSignalsDisplay({ signals }: { signals: ExtractedSignals | null }) {
   const theme = useTheme();
-  const [expanded, setExpanded] = useState(false);
+
+  if (!signals) {
+    return (
+      <Box sx={{ py: 1 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: "italic" }}>
+          No extracted signals available. Run analysis via API to populate.
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+        gap: 2,
+      }}
+    >
+      {/* Company */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <Building2 size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Company
+          </Typography>
+          <Typography variant="body2">{signals.company || "—"}</Typography>
+        </Box>
+      </Box>
+
+      {/* Role */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <Briefcase size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Role
+          </Typography>
+          <Typography variant="body2">{signals.role || "—"}</Typography>
+        </Box>
+      </Box>
+
+      {/* Dates */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <Calendar size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Dates
+          </Typography>
+          {signals.dates.length > 0 ? (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.5 }}>
+              {signals.dates.map((d, i) => (
+                <Chip
+                  key={i}
+                  label={`${d.iso} (${d.kind})`}
+                  size="small"
+                  sx={{
+                    height: 20,
+                    fontSize: "0.7rem",
+                    bgcolor: theme.palette.background.default,
+                  }}
+                />
+              ))}
+            </Box>
+          ) : (
+            <Typography variant="body2">—</Typography>
+          )}
+        </Box>
+      </Box>
+
+      {/* Next Steps */}
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <ArrowRight size={16} color={theme.palette.text.secondary} style={{ marginTop: 2 }} />
+        <Box>
+          <Typography variant="caption" color="text.secondary">
+            Next Steps
+          </Typography>
+          {signals.nextStepIndicators.length > 0 ? (
+            <Typography variant="body2">{signals.nextStepIndicators.join(", ")}</Typography>
+          ) : (
+            <Typography variant="body2">—</Typography>
+          )}
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+// Email Card Component
+function EmailCard({
+  email,
+  jobOptions,
+  onLinkChange,
+  initialExpanded = false,
+}: {
+  email: DisplayEmail;
+  jobOptions: JobApplicationOption[];
+  onLinkChange: (emailId: string, jobApplicationId: string | null) => Promise<void>;
+  initialExpanded?: boolean;
+}) {
+  const theme = useTheme();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(initialExpanded);
+  const [selectedJobId, setSelectedJobId] = useState<string>(email.linkedJobId || "");
+  const [isLinking, setIsLinking] = useState(false);
+
+  // Scroll into view if initially expanded (navigated from job detail)
+  useEffect(() => {
+    if (initialExpanded && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [initialExpanded]);
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -249,9 +363,29 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
 
   const typeColors = getTypeColor(email.type);
 
+  // Format confidence as percentage
+  const confidenceDisplay =
+    email.confidence !== null ? `${Math.round(email.confidence * 100)}%` : null;
+
+  const handleLinkChange = async (newJobId: string) => {
+    setIsLinking(true);
+    setSelectedJobId(newJobId);
+    const jobIdOrNull = newJobId === "" ? null : newJobId;
+    await onLinkChange(email.id, jobIdOrNull);
+    setIsLinking(false);
+  };
+
+  const handleUnlink = async () => {
+    setIsLinking(true);
+    setSelectedJobId("");
+    await onLinkChange(email.id, null);
+    setIsLinking(false);
+  };
+
   return (
     <>
       <Card
+        ref={cardRef}
         onClick={() => setExpanded(!expanded)}
         sx={{
           border: `1px solid ${theme.palette.divider}`,
@@ -273,6 +407,7 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
               mb: 1.5,
             }}
           >
+            {/* Classification Label Chip */}
             <Chip
               label={email.type}
               size="small"
@@ -284,15 +419,46 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
                 fontSize: "0.7rem",
               }}
             />
+            {/* Confidence Indicator */}
+            {confidenceDisplay && (
+              <Chip
+                label={confidenceDisplay}
+                size="small"
+                sx={{
+                  bgcolor: theme.palette.background.default,
+                  border: `1px solid ${theme.palette.divider}`,
+                  fontWeight: 500,
+                  height: 22,
+                  fontSize: "0.65rem",
+                }}
+              />
+            )}
+            {email.needsReview && (
+              <Chip
+                icon={<AlertTriangle size={12} />}
+                label="Needs review"
+                size="small"
+                sx={{
+                  bgcolor: `${theme.palette.warning.main}1A`,
+                  color: theme.palette.warning.main,
+                  fontWeight: 500,
+                  height: 22,
+                  fontSize: "0.7rem",
+                }}
+              />
+            )}
             <Chip
               icon={<LinkIcon size={12} />}
-              label={email.company}
+              label={email.linkedJobId ? email.linkedJob : email.company}
               size="small"
               sx={{
                 fontSize: "0.7rem",
                 height: 22,
-                bgcolor: theme.palette.background.default,
-                border: `1px solid ${theme.palette.divider}`,
+                bgcolor: email.linkedJobId
+                  ? `${theme.palette.secondary.main}1A`
+                  : theme.palette.background.default,
+                border: `1px solid ${email.linkedJobId ? theme.palette.secondary.main : theme.palette.divider}`,
+                color: email.linkedJobId ? theme.palette.secondary.main : undefined,
               }}
             />
             <Typography
@@ -335,6 +501,7 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
           }}
         >
           <CardContent sx={{ p: { xs: 1.5, sm: 2.5 } }}>
+            {/* Email Details Grid */}
             <Box
               sx={{
                 display: "grid",
@@ -368,6 +535,72 @@ function EmailCard({ email }: { email: (typeof mockEmails)[0] }) {
                 <Typography variant="body2">{email.linkedJob}</Typography>
               </Box>
             </Box>
+
+            {/* Extracted Signals Section */}
+            <Box sx={{ mb: 3 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 600, mb: 1.5, display: "flex", alignItems: "center", gap: 1 }}
+              >
+                Extracted Signals
+                {email.classifiedAt && (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ fontWeight: 400 }}
+                  >
+                    (analyzed {formatTimestamp(email.classifiedAt)})
+                  </Typography>
+                )}
+              </Typography>
+              <ExtractedSignalsDisplay signals={email.extractedSignals} />
+            </Box>
+
+            <Divider sx={{ mb: 3 }} />
+
+            {/* Manual Job Link Dropdown */}
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
+                Link to Job Application:
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <FormControl size="small" sx={{ minWidth: 250 }}>
+                  <Select
+                    value={selectedJobId}
+                    onChange={(e) => handleLinkChange(e.target.value)}
+                    displayEmpty
+                    disabled={isLinking}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MenuItem value="">
+                      <em>Not linked</em>
+                    </MenuItem>
+                    {jobOptions.map((job) => (
+                      <MenuItem key={job.id} value={job.id}>
+                        {job.company} — {job.role}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {email.linkedJobId && (
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUnlink();
+                    }}
+                    disabled={isLinking}
+                    color="error"
+                    title="Unlink"
+                  >
+                    <Unlink size={16} />
+                  </IconButton>
+                )}
+                {isLinking && <CircularProgress size={16} />}
+              </Box>
+            </Box>
+
             <Divider sx={{ mb: 2 }} />
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {email.body}
@@ -384,7 +617,6 @@ function SettingsDialog({ open, onClose }: { open: boolean; onClose: () => void 
   const theme = useTheme();
   const [email, setEmail] = useState("william.jobs@example.com");
   const [provider, setProvider] = useState("Gmail");
-  const [connected, setConnected] = useState(true);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -466,11 +698,52 @@ function SettingsDialog({ open, onClose }: { open: boolean; onClose: () => void 
 export default function JobInboxPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const searchParams = useSearchParams();
+  const highlightEmailId = searchParams.get("email");
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("All");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [emails, setEmails] = useState<DisplayEmail[]>([]);
+  const [jobOptions, setJobOptions] = useState<JobApplicationOption[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isMatching, setIsMatching] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const filteredEmails = mockEmails.filter((email) => {
+  // Fetch emails and job applications
+  const fetchData = async () => {
+    try {
+      const [emailsRes, jobsRes] = await Promise.all([
+        fetch("/api/admin/job-inbox/messages"),
+        fetch("/api/admin/job-applications"),
+      ]);
+
+      if (emailsRes.ok) {
+        const emailData: EmailMessageFromApi[] = await emailsRes.json();
+        setEmails(emailData.map(mapEmailToDisplay));
+      }
+
+      if (jobsRes.ok) {
+        const jobData = await jobsRes.json();
+        setJobOptions(
+          jobData.map((j: { id: string; company: string; role: string }) => ({
+            id: j.id,
+            company: j.company,
+            role: j.role,
+          }))
+        );
+      }
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const filteredEmails = emails.filter((email) => {
     const matchesSearch =
       email.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
       email.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -478,6 +751,116 @@ export default function JobInboxPage() {
     const matchesFilter = filter === "All" || email.type === filter;
     return matchesSearch && matchesFilter;
   });
+
+  // Compute summary stats from loaded emails (using persisted labels)
+  const summaryStats = {
+    total: emails.length,
+    confirmations: emails.filter((e) => e.type === "Confirmation").length,
+    interviews: emails.filter((e) => e.type === "Interview").length,
+    offers: emails.filter((e) => e.type === "Offer").length,
+    rejections: emails.filter((e) => e.type === "Rejection").length,
+  };
+
+  // Match emails to jobs
+  const handleMatchEmails = async () => {
+    if (emails.length === 0 || isMatching) return;
+
+    setIsMatching(true);
+
+    try {
+      const res = await fetch("/api/admin/job-inbox/match", {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+
+        // Update emails with match results (mark ambiguous as needsReview)
+        const updatedEmails = emails.map((email) => {
+          const result = data.results.find(
+            (r: { emailId: string; outcome: string }) => r.emailId === email.id
+          );
+          if (result) {
+            if (result.outcome === "matched") {
+              const job = jobOptions.find((j) => j.id === result.jobApplicationId);
+              return {
+                ...email,
+                linkedJobId: result.jobApplicationId,
+                linkedJob: job ? `${job.company} — ${job.role}` : "Linked",
+                needsReview: false,
+              };
+            } else if (result.outcome === "ambiguous") {
+              return { ...email, needsReview: true };
+            }
+          }
+          return email;
+        });
+
+        setEmails(updatedEmails);
+      }
+    } catch (err) {
+      console.error("Failed to match emails:", err);
+    } finally {
+      setIsMatching(false);
+    }
+  };
+
+  // Analyze unclassified emails
+  const handleAnalyzeUnclassified = async () => {
+    if (isAnalyzing) return;
+
+    setIsAnalyzing(true);
+
+    try {
+      const res = await fetch("/api/admin/job-inbox/analyze", {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        // Refresh the inbox to show updated classifications
+        await fetchData();
+      }
+    } catch (err) {
+      console.error("Failed to analyze emails:", err);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // Handle manual link change
+  const handleLinkChange = async (emailId: string, jobApplicationId: string | null) => {
+    try {
+      const res = await fetch(`/api/admin/job-inbox/messages/${emailId}/link`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobApplicationId }),
+      });
+
+      if (res.ok) {
+        const updatedEmail: EmailMessageFromApi = await res.json();
+
+        // Update local state
+        setEmails((prevEmails) =>
+          prevEmails.map((email) => {
+            if (email.id === emailId) {
+              const linkedJob = updatedEmail.jobApplication
+                ? `${updatedEmail.jobApplication.company} — ${updatedEmail.jobApplication.role}`
+                : "Not linked";
+              return {
+                ...email,
+                linkedJobId: updatedEmail.jobApplicationId,
+                linkedJob,
+                needsReview: false,
+              };
+            }
+            return email;
+          })
+        );
+      }
+    } catch (err) {
+      console.error("Failed to update email link:", err);
+    }
+  };
 
   return (
     <Box>
@@ -503,17 +886,37 @@ export default function JobInboxPage() {
             Job Email Inbox
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
-            View and classify job-related emails
+            View job-related emails with classification and extracted signals
           </Typography>
         </Box>
-        <Button
-          variant="outlined"
-          startIcon={<Settings size={18} />}
-          onClick={() => setSettingsOpen(true)}
-          sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
-        >
-          Settings
-        </Button>
+        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+          <Button
+            variant="contained"
+            startIcon={<Sparkles size={18} />}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
+            onClick={handleAnalyzeUnclassified}
+            disabled={isAnalyzing || emails.length === 0}
+          >
+            {isAnalyzing ? "Classifying..." : "Classify Emails"}
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<LinkIcon size={18} />}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
+            onClick={handleMatchEmails}
+            disabled={isMatching || emails.length === 0}
+          >
+            {isMatching ? "Matching..." : "Match Emails"}
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Settings size={18} />}
+            onClick={() => setSettingsOpen(true)}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
+          >
+            Settings
+          </Button>
+        </Box>
       </Box>
 
       {/* Summary Cards */}
@@ -534,12 +937,13 @@ export default function JobInboxPage() {
 
       {/* Search and Filter */}
       <Card sx={{ border: `1px solid ${theme.palette.divider}`, mb: 2.5 }}>
-        <CardContent sx={{ p: 1.5 }}>
+        <CardContent sx={{ p: 2.5 }}>
           <Box
             sx={{
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               alignItems: "center",
+              justifyContent: "center",
               gap: 2,
             }}
           >
@@ -590,7 +994,13 @@ export default function JobInboxPage() {
           </Typography>
         </Box>
 
-        {filteredEmails.length === 0 ? (
+        {loading ? (
+          <Card sx={{ border: `1px solid ${theme.palette.divider}`, p: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <CircularProgress size={24} />
+            </Box>
+          </Card>
+        ) : filteredEmails.length === 0 ? (
           <Card sx={{ border: `1px solid ${theme.palette.divider}`, p: 4 }}>
             <Typography variant="body2" color="text.secondary" align="center">
               No emails found matching your search criteria.
@@ -599,7 +1009,13 @@ export default function JobInboxPage() {
         ) : (
           <Box>
             {filteredEmails.map((email) => (
-              <EmailCard key={email.id} email={email} />
+              <EmailCard
+                key={email.id}
+                email={email}
+                jobOptions={jobOptions}
+                onLinkChange={handleLinkChange}
+                initialExpanded={email.id === highlightEmailId}
+              />
             ))}
           </Box>
         )}

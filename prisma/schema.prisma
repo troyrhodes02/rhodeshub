@@ -1,9 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
 }
 
-generator client {
-  provider = "prisma-client-js"
+model JobApplication {
+  id                 String               @id @default(cuid())
+  company            String
+  role               String
+  link               String
+  dateApplied        DateTime
+  status             JobApplicationStatus
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  statusOverriddenAt DateTime?
+  statusSource       JobStatusSource      @default(MANUAL)
+  emails             EmailMessage[]
+  statusAudits       JobStatusAudit[]
+}
+
+model EmailMessage {
+  id                       String                   @id @default(cuid())
+  externalId               String                   @unique
+  from                     String
+  to                       String
+  subject                  String
+  preview                  String
+  body                     String
+  receivedAt               DateTime
+  jobApplicationId         String?
+  classificationLabel      EmailClassificationLabel @default(UNCLASSIFIED)
+  classificationConfidence Float?
+  extractedSignals         Json?
+  classifiedAt             DateTime?
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+  jobApplication           JobApplication?          @relation(fields: [jobApplicationId], references: [id])
+
+  @@index([jobApplicationId])
+}
+
+model JobStatusAudit {
+  id               String                @id @default(cuid())
+  jobApplicationId String
+  previousStatus   JobApplicationStatus?
+  newStatus        JobApplicationStatus
+  source           JobStatusSource
+  reason           String
+  emailMessageId   String?
+  createdAt        DateTime              @default(now())
+  jobApplication   JobApplication        @relation(fields: [jobApplicationId], references: [id])
+
+  @@index([jobApplicationId])
+  @@index([emailMessageId])
 }
 
 enum JobApplicationStatus {
@@ -13,14 +64,35 @@ enum JobApplicationStatus {
   OFFER
 }
 
-model JobApplication {
-  id          String               @id @default(cuid())
-  company     String
-  role        String
-  link        String
-  dateApplied DateTime
-  status      JobApplicationStatus
+enum EmailClassificationLabel {
+  UNCLASSIFIED
+  CONFIRMATION
+  INTERVIEW
+  OFFER
+  REJECTION
+}
 
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+enum JobStatusSource {
+  MANUAL
+  AUTOMATED
+}
+
+// Gmail OAuth credentials (single admin inbox)
+model GmailCredential {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  refreshToken         String    // Encrypted/obfuscated at application layer
+  accessToken          String?
+  accessTokenExpiresAt DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+// Gmail sync cursor for incremental ingestion
+model GmailSyncState {
+  id            String    @id @default(cuid())
+  lastHistoryId String?   // Gmail history ID for incremental sync
+  lastSyncedAt  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
