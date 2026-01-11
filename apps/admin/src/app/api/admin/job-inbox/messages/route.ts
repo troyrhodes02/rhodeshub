@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { analyzeEmailAndApplyAutomation } from "@/lib/emailAutomationPipeline";
+import { matchEmailToJobs } from "@/lib/emailJobMatching";
+import { EmailClassificationLabel } from "@prisma/client";
 
 interface CreateEmailMessageBody {
   externalId: string;
@@ -65,10 +68,57 @@ export async function POST(req: NextRequest) {
     });
 
     if (existing) {
+      // If existing email is still unclassified or unlinked, try to process it
+      const needsProcessing =
+        !existing.classifiedAt ||
+        existing.classificationLabel === EmailClassificationLabel.UNCLASSIFIED ||
+        !existing.jobApplicationId;
+
+      if (needsProcessing) {
+        try {
+          // If unlinked, try auto-matching first
+          if (!existing.jobApplicationId) {
+            const jobs = await prisma.jobApplication.findMany({
+              select: { id: true, company: true, role: true },
+            });
+
+            const matchResult = matchEmailToJobs(
+              { subject: existing.subject, preview: existing.preview, body: existing.body },
+              jobs
+            );
+
+            if (matchResult.type === "matched") {
+              await prisma.emailMessage.update({
+                where: { id: existing.id },
+                data: { jobApplicationId: matchResult.jobApplicationId },
+              });
+            }
+          }
+
+          // Run automation pipeline
+          await analyzeEmailAndApplyAutomation(existing.id);
+
+          // Fetch updated email with job relation for response
+          const updatedEmail = await prisma.emailMessage.findUnique({
+            where: { id: existing.id },
+            include: {
+              jobApplication: {
+                select: { id: true, company: true, role: true, status: true },
+              },
+            },
+          });
+          return NextResponse.json(updatedEmail, { status: 200 });
+        } catch (err) {
+          console.error("Email processing failed for existing email:", err);
+          // Return existing email even if processing fails
+          return NextResponse.json(existing, { status: 200 });
+        }
+      }
       return NextResponse.json(existing, { status: 200 });
     }
 
-    const emailMessage = await prisma.emailMessage.create({
+    // Create new email message
+    let emailMessage = await prisma.emailMessage.create({
       data: {
         externalId,
         from,
@@ -80,7 +130,47 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(emailMessage, { status: 201 });
+    // Auto-match email to job application
+    try {
+      const jobs = await prisma.jobApplication.findMany({
+        select: { id: true, company: true, role: true },
+      });
+
+      const matchResult = matchEmailToJobs(
+        { subject, preview, body: emailBody },
+        jobs
+      );
+
+      if (matchResult.type === "matched") {
+        // Link email to the matched job
+        emailMessage = await prisma.emailMessage.update({
+          where: { id: emailMessage.id },
+          data: { jobApplicationId: matchResult.jobApplicationId },
+        });
+      }
+    } catch (err) {
+      console.error("Auto-matching failed for new email:", err);
+      // Continue - matching is best-effort
+    }
+
+    // Run automation pipeline (classification + status updates if linked)
+    try {
+      await analyzeEmailAndApplyAutomation(emailMessage.id);
+      // Fetch updated email with persisted classification and job relation
+      const updatedEmail = await prisma.emailMessage.findUnique({
+        where: { id: emailMessage.id },
+        include: {
+          jobApplication: {
+            select: { id: true, company: true, role: true, status: true },
+          },
+        },
+      });
+      return NextResponse.json(updatedEmail, { status: 201 });
+    } catch (err) {
+      console.error("Email automation pipeline failed for new email:", err);
+      // Return email even if pipeline fails (classification can be retried later)
+      return NextResponse.json(emailMessage, { status: 201 });
+    }
   } catch (err) {
     console.error("Create EmailMessage failed:", err);
     return NextResponse.json({ error: "Failed to create email message" }, { status: 500 });

@@ -19,6 +19,7 @@ export interface JobApplicationListItem {
   link: string;
   dateApplied: string;
   status: JobApplicationStatus;
+  statusSource: "MANUAL" | "AUTOMATED";
   createdAt: string;
   updatedAt: string;
   lastActivityAt: string;
@@ -52,6 +53,7 @@ export async function GET() {
         link: job.link,
         dateApplied: job.dateApplied.toISOString(),
         status: job.status as JobApplicationStatus,
+        statusSource: job.statusSource as "MANUAL" | "AUTOMATED",
         createdAt: job.createdAt.toISOString(),
         updatedAt: job.updatedAt.toISOString(),
         lastActivityAt: lastActivityAt.toISOString(),

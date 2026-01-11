@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Box,
   Card,
@@ -40,6 +41,7 @@ import {
   Briefcase,
   Calendar,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
 
 // Extracted signals shape from API
@@ -325,15 +327,25 @@ function EmailCard({
   email,
   jobOptions,
   onLinkChange,
+  initialExpanded = false,
 }: {
   email: DisplayEmail;
   jobOptions: JobApplicationOption[];
   onLinkChange: (emailId: string, jobApplicationId: string | null) => Promise<void>;
+  initialExpanded?: boolean;
 }) {
   const theme = useTheme();
-  const [expanded, setExpanded] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(initialExpanded);
   const [selectedJobId, setSelectedJobId] = useState<string>(email.linkedJobId || "");
   const [isLinking, setIsLinking] = useState(false);
+
+  // Scroll into view if initially expanded (navigated from job detail)
+  useEffect(() => {
+    if (initialExpanded && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [initialExpanded]);
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -373,6 +385,7 @@ function EmailCard({
   return (
     <>
       <Card
+        ref={cardRef}
         onClick={() => setExpanded(!expanded)}
         sx={{
           border: `1px solid ${theme.palette.divider}`,
@@ -685,6 +698,8 @@ function SettingsDialog({ open, onClose }: { open: boolean; onClose: () => void 
 export default function JobInboxPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const searchParams = useSearchParams();
+  const highlightEmailId = searchParams.get("email");
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("All");
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -692,6 +707,7 @@ export default function JobInboxPage() {
   const [jobOptions, setJobOptions] = useState<JobApplicationOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMatching, setIsMatching] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Fetch emails and job applications
   const fetchData = async () => {
@@ -789,6 +805,28 @@ export default function JobInboxPage() {
     }
   };
 
+  // Analyze unclassified emails
+  const handleAnalyzeUnclassified = async () => {
+    if (isAnalyzing) return;
+
+    setIsAnalyzing(true);
+
+    try {
+      const res = await fetch("/api/admin/job-inbox/analyze", {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        // Refresh the inbox to show updated classifications
+        await fetchData();
+      }
+    } catch (err) {
+      console.error("Failed to analyze emails:", err);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   // Handle manual link change
   const handleLinkChange = async (emailId: string, jobApplicationId: string | null) => {
     try {
@@ -854,6 +892,15 @@ export default function JobInboxPage() {
         <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
           <Button
             variant="contained"
+            startIcon={<Sparkles size={18} />}
+            sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
+            onClick={handleAnalyzeUnclassified}
+            disabled={isAnalyzing || emails.length === 0}
+          >
+            {isAnalyzing ? "Classifying..." : "Classify Emails"}
+          </Button>
+          <Button
+            variant="outlined"
             startIcon={<LinkIcon size={18} />}
             sx={{ textTransform: "none", fontSize: "0.875rem", py: 0.75 }}
             onClick={handleMatchEmails}
@@ -967,6 +1014,7 @@ export default function JobInboxPage() {
                 email={email}
                 jobOptions={jobOptions}
                 onLinkChange={handleLinkChange}
+                initialExpanded={email.id === highlightEmailId}
               />
             ))}
           </Box>

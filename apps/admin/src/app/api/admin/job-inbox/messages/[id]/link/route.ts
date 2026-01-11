@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { analyzeEmailAndApplyAutomation } from "@/lib/emailAutomationPipeline";
 
 interface LinkPayload {
   jobApplicationId: string | null;
@@ -31,13 +32,29 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       }
     }
 
-    // Update the email
-    const updatedEmail = await prisma.emailMessage.update({
+    // Update the email link
+    await prisma.emailMessage.update({
       where: { id },
       data: { jobApplicationId },
+    });
+
+    // If linking to a job (not unlinking), re-run automation pipeline
+    // This triggers status updates based on email classification
+    if (jobApplicationId !== null) {
+      try {
+        await analyzeEmailAndApplyAutomation(id);
+      } catch (err) {
+        console.error("Automation pipeline failed after linking:", err);
+        // Continue - linking succeeded, automation is a secondary effect
+      }
+    }
+
+    // Fetch updated email with job relation for response
+    const updatedEmail = await prisma.emailMessage.findUnique({
+      where: { id },
       include: {
         jobApplication: {
-          select: { id: true, company: true, role: true },
+          select: { id: true, company: true, role: true, status: true },
         },
       },
     });

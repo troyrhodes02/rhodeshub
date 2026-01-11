@@ -29,6 +29,9 @@ import {
   Clock,
   CheckCircle2,
   FileText,
+  History,
+  User,
+  Bot,
 } from "lucide-react";
 
 // API response types
@@ -40,6 +43,16 @@ interface LinkedEmail {
   receivedAt: string;
 }
 
+interface StatusAudit {
+  id: string;
+  previousStatus: "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER" | null;
+  newStatus: "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER";
+  source: "MANUAL" | "AUTOMATED";
+  reason: string;
+  emailMessageId: string | null;
+  createdAt: string;
+}
+
 interface JobApplicationDetail {
   id: string;
   company: string;
@@ -47,9 +60,12 @@ interface JobApplicationDetail {
   link: string;
   dateApplied: string;
   status: "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER";
+  statusSource: "MANUAL" | "AUTOMATED";
+  statusOverriddenAt: string | null;
   createdAt: string;
   updatedAt: string;
   emails: LinkedEmail[];
+  statusAudits: StatusAudit[];
 }
 
 // Timeline event type
@@ -122,12 +138,23 @@ function ActivityIcon({ type }: { type: string }) {
 // Email Card Component
 function EmailCard({ email }: { email: LinkedEmail }) {
   const theme = useTheme();
+  const router = useRouter();
+
+  const handleClick = () => {
+    // Navigate to Job Inbox with email ID to auto-expand
+    router.push(`/job-inbox?email=${email.id}`);
+  };
 
   return (
     <Card
+      onClick={handleClick}
       sx={{
         border: `1px solid ${theme.palette.divider}`,
         mb: 2,
+        cursor: "pointer",
+        "&:hover": {
+          borderColor: theme.palette.primary.main,
+        },
       }}
     >
       <CardContent sx={{ p: 1.5 }}>
@@ -158,6 +185,7 @@ export default function JobApplicationDetailPage({ params }: { params: Promise<{
   const [job, setJob] = useState<JobApplicationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [isSavingStatus, setIsSavingStatus] = useState(false);
 
   useEffect(() => {
     async function fetchJob() {
@@ -178,6 +206,34 @@ export default function JobApplicationDetailPage({ params }: { params: Promise<{
     }
     fetchJob();
   }, [id, router]);
+
+  // Handle manual status override
+  const handleSaveStatus = async () => {
+    if (!job || selectedStatus === job.status || isSavingStatus) return;
+
+    setIsSavingStatus(true);
+    try {
+      const res = await fetch(`/api/admin/job-applications/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: selectedStatus }),
+      });
+
+      if (res.ok) {
+        // Refetch job to get updated data and audits
+        const updatedRes = await fetch(`/api/admin/job-applications/${id}`);
+        if (updatedRes.ok) {
+          const updatedData: JobApplicationDetail = await updatedRes.json();
+          setJob(updatedData);
+          setSelectedStatus(updatedData.status);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to update status:", err);
+    } finally {
+      setIsSavingStatus(false);
+    }
+  };
 
   // Build timeline from job data
   const buildTimeline = (job: JobApplicationDetail): TimelineEvent[] => {
@@ -426,19 +482,20 @@ export default function JobApplicationDetailPage({ params }: { params: Promise<{
 
         {/* Right Column */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {/* Quick Actions */}
+          {/* Manual Status Override */}
           <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, fontSize: "1rem" }}>
-                Quick Actions
+                Manual Status Override
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <FormControl fullWidth size="small">
-                  <InputLabel>Update Status</InputLabel>
+                  <InputLabel>Status</InputLabel>
                   <Select
-                    label="Update Status"
+                    label="Status"
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
+                    disabled={isSavingStatus}
                   >
                     <MenuItem value="APPLIED">Applied</MenuItem>
                     <MenuItem value="INTERVIEW">Interview</MenuItem>
@@ -446,6 +503,28 @@ export default function JobApplicationDetailPage({ params }: { params: Promise<{
                     <MenuItem value="REJECTED">Rejected</MenuItem>
                   </Select>
                 </FormControl>
+                <Button
+                  variant="contained"
+                  onClick={handleSaveStatus}
+                  disabled={selectedStatus === job.status || isSavingStatus}
+                  sx={{ textTransform: "none" }}
+                >
+                  {isSavingStatus ? "Saving..." : "Save Override"}
+                </Button>
+                {/* Status source indicator */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mt: 0.5 }}>
+                  {job.statusSource === "MANUAL" ? (
+                    <User size={14} color={theme.palette.text.secondary} />
+                  ) : (
+                    <Bot size={14} color={theme.palette.text.secondary} />
+                  )}
+                  <Typography variant="caption" color="text.secondary">
+                    {job.statusSource === "MANUAL" ? "Manual override" : "Set by automation"}
+                    {job.statusOverriddenAt && (
+                      <> on {formatDateTime(job.statusOverriddenAt)}</>
+                    )}
+                  </Typography>
+                </Box>
               </Box>
             </CardContent>
           </Card>
@@ -472,6 +551,58 @@ export default function JobApplicationDetailPage({ params }: { params: Promise<{
                   {job.link}
                 </a>
               </Typography>
+            </CardContent>
+          </Card>
+
+          {/* Status History */}
+          <Card sx={{ border: `1px solid ${theme.palette.divider}` }}>
+            <CardContent sx={{ p: { xs: 1.75, sm: 2.5 } }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+                <History size={18} color={theme.palette.text.secondary} />
+                <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1rem" }}>
+                  Status History
+                </Typography>
+              </Box>
+              {job.statusAudits.length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  No status changes recorded.
+                </Typography>
+              ) : (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  {job.statusAudits.map((audit) => (
+                    <Box
+                      key={audit.id}
+                      sx={{
+                        p: 1.25,
+                        borderRadius: 1,
+                        bgcolor: theme.palette.background.default,
+                        border: `1px solid ${theme.palette.divider}`,
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.5 }}>
+                        {audit.source === "MANUAL" ? (
+                          <User size={12} color={theme.palette.text.secondary} />
+                        ) : (
+                          <Bot size={12} color={theme.palette.text.secondary} />
+                        )}
+                        <Typography variant="caption" color="text.secondary">
+                          {audit.source === "MANUAL" ? "Manual" : "Automated"}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ ml: "auto" }}>
+                          {formatDateTime(audit.createdAt)}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" sx={{ fontSize: "0.85rem" }}>
+                        {audit.previousStatus ? getStatusLabel(audit.previousStatus) : "—"} →{" "}
+                        <strong>{getStatusLabel(audit.newStatus)}</strong>
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {audit.reason}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Box>

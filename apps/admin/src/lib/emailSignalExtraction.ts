@@ -51,13 +51,27 @@ const START_DATE_KEYWORDS = ["start", "begin", "join", "onboard"];
  * Extract company name from email sender address.
  * Parses the domain portion before the first dot.
  * Example: "jobs@google.com" → "Google"
+ * Example: "recruiting@amazon.jobs" → "Amazon"
+ *
+ * Handles special job board domains like .jobs
  */
 function extractCompanyFromEmailAddress(email: string): string | null {
+  // Skip generic email providers
+  const genericDomains = ["gmail", "yahoo", "outlook", "hotmail", "icloud", "aol", "mail", "protonmail"];
+
+  // Check for .jobs domain (e.g., amazon.jobs)
+  const jobsDomainMatch = email.match(/@([^.]+)\.jobs\b/i);
+  if (jobsDomainMatch && jobsDomainMatch[1]) {
+    const company = jobsDomainMatch[1].toLowerCase();
+    if (!genericDomains.includes(company)) {
+      return company.charAt(0).toUpperCase() + company.slice(1);
+    }
+  }
+
+  // Standard domain extraction (first part after @)
   const match = email.match(/@([^.]+)/);
   if (match && match[1]) {
     const domain = match[1].toLowerCase();
-    // Skip generic email providers
-    const genericDomains = ["gmail", "yahoo", "outlook", "hotmail", "icloud", "aol", "mail"];
     if (genericDomains.includes(domain)) {
       return null;
     }
@@ -319,10 +333,11 @@ export function extractEmailSignals(input: EmailSignalExtractionInput): EmailExt
   // Combine text for extraction (subject + preview + body)
   const combinedText = `${subject} ${preview} ${body}`;
 
-  // Extract company: try content patterns first, then sender domain fallback
-  let company = extractCompanyFromContent(combinedText);
+  // Extract company: prefer sender domain (more reliable), fallback to content patterns
+  // This prevents false positives like "Engineer We" being extracted as a company
+  let company = extractCompanyFromEmailAddress(from);
   if (!company) {
-    company = extractCompanyFromEmailAddress(from);
+    company = extractCompanyFromContent(combinedText);
   }
 
   // Extract role

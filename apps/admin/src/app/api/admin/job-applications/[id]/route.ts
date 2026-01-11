@@ -18,6 +18,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             receivedAt: true,
           },
         },
+        statusAudits: {
+          orderBy: { createdAt: "desc" },
+          take: 25,
+          select: {
+            id: true,
+            previousStatus: true,
+            newStatus: true,
+            source: true,
+            reason: true,
+            emailMessageId: true,
+            createdAt: true,
+          },
+        },
       },
     });
 
@@ -33,6 +46,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       link: jobApplication.link,
       dateApplied: jobApplication.dateApplied.toISOString(),
       status: jobApplication.status,
+      statusSource: jobApplication.statusSource,
+      statusOverriddenAt: jobApplication.statusOverriddenAt?.toISOString() ?? null,
       createdAt: jobApplication.createdAt.toISOString(),
       updatedAt: jobApplication.updatedAt.toISOString(),
       emails: jobApplication.emails.map((email) => ({
@@ -41,6 +56,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         from: email.from,
         preview: email.preview,
         receivedAt: email.receivedAt.toISOString(),
+      })),
+      statusAudits: jobApplication.statusAudits.map((audit) => ({
+        id: audit.id,
+        previousStatus: audit.previousStatus,
+        newStatus: audit.newStatus,
+        source: audit.source,
+        reason: audit.reason,
+        emailMessageId: audit.emailMessageId,
+        createdAt: audit.createdAt.toISOString(),
       })),
     };
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { matchEmailToJobs, MatchResult } from "@/lib/emailJobMatching";
+import { analyzeEmailAndApplyAutomation } from "@/lib/emailAutomationPipeline";
 
 interface MatchResultItem {
   emailId: string;
@@ -50,6 +51,14 @@ export async function POST() {
           where: { id: email.id },
           data: { jobApplicationId: matchResult.jobApplicationId },
         });
+
+        // Run automation pipeline to trigger status updates
+        try {
+          await analyzeEmailAndApplyAutomation(email.id);
+        } catch (err) {
+          console.error(`Automation failed for email ${email.id}:`, err);
+          // Continue - matching succeeded, automation is secondary
+        }
 
         results.push({
           emailId: email.id,
