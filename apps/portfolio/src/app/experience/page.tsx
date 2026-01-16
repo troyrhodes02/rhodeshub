@@ -18,7 +18,7 @@ const experiences: Experience[] = [
       "Built a production-grade freight finance audit platform that reconciles rate confirmations, invoices, and Bills of Lading to detect payment discrepancies and reduce manual reconciliation",
       "Designed deterministic payout calculation logic with auditable, line-item breakdowns for mileage rates, fuel surcharges, and accessorial charges",
       "Implemented a rules-driven variance engine that preserves original document data while allowing safe recalculation from corrected inputs",
-      "Developed a responsive React + TypeScript application using Material UI and deployed via Vercel with preview and production workflows",
+      "Collaborated in weekly planning cycles to translate customer requirements into scoped engineering tasks and deliver iterative product improvements using React, TypeScript, Material UI, and Vercel",
     ],
     technologies: ["React", "TypeScript", "Material UI", "Vercel", "Node.js", "PostgreSQL"],
   },
@@ -51,16 +51,17 @@ const experiences: Experience[] = [
   {
     id: "pvamu",
     company: "Prairie View A&M University",
-    title: "IT Software Applications Developer I",
+    title: "Enterprise Applications Systems Analyst",
     location: "On-site",
     startDate: "November 2023",
     endDate: "Present",
     description:
       "As part of the Enterprise Applications team at Prairie View A&M University, I build and maintain internal systems that support academic and administrative operations for a large university user base. My role focuses on workflow automation, system integrations, and secure access management across enterprise platforms while ensuring compliance with institutional and regulatory standards.",
     contributions: [
-      "Developed automated workflow systems with dynamic form routing and SharePoint-based document management, supporting operations for 10,000+ users",
-      "Managed enterprise user provisioning and access control across platforms including Pathify, DocuSign, Laserfiche, and Dynamic Forms, ensuring FERPA-compliant workflows",
-      "Collaborated with stakeholders across departments to design and integrate custom UI components that aligned technical systems with real operational needs",
+      "Serve as the primary operational owner for multiple enterprise applications and workflow platforms, exercising production authority over system configuration, changes, reliability, and ongoing improvement",
+      "Diagnose, prioritize, and resolve complex user issues across integrated systems, translating unclear, non-technical requests into documented technical solutions spanning identity, access, and platform workflows",
+      "Design, build, and manage advanced digital forms and workflows end-to-end, including conditional routing, role-based logic, escalations, notifications, and cross-system integrations aligned to institutional needs",
+      "Lead configuration, testing, launch readiness, and ongoing maintenance of a centralized campus portal, while enabling internal teams through structured SOPs, documentation, and knowledge sharing",
     ],
     technologies: [
       "SharePoint",
