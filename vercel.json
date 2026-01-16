@@ -1,9 +1,8 @@
 {
-    "crons": [
-      {
-        "path": "/api/admin/job-inbox/gmail/sync",
-        "schedule": "*/5 * * * *"
-      }
-    ]
-  }
-  
+  "crons": [
+    {
+      "path": "/api/admin/job-inbox/gmail/sync",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

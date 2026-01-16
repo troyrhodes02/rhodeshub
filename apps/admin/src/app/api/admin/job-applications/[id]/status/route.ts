@@ -24,10 +24,7 @@ interface UpdateStatusBody {
  *
  * This ensures automation will not override manually-set statuses.
  */
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const body: UpdateStatusBody = await req.json();
@@ -49,10 +46,7 @@ export async function PATCH(
     });
 
     if (!existingJob) {
-      return NextResponse.json(
-        { error: "Job application not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Job application not found" }, { status: 404 });
     }
 
     const previousStatus = existingJob.status;
@@ -97,10 +91,6 @@ export async function PATCH(
     return NextResponse.json(response, { status: 200 });
   } catch (err) {
     console.error("Update job status failed:", err);
-    return NextResponse.json(
-      { error: "Failed to update job status" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update job status" }, { status: 500 });
   }
 }
-

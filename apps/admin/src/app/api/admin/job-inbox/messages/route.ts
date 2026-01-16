@@ -136,10 +136,7 @@ export async function POST(req: NextRequest) {
         select: { id: true, company: true, role: true },
       });
 
-      const matchResult = matchEmailToJobs(
-        { subject, preview, body: emailBody },
-        jobs
-      );
+      const matchResult = matchEmailToJobs({ subject, preview, body: emailBody }, jobs);
 
       if (matchResult.type === "matched") {
         // Link email to the matched job

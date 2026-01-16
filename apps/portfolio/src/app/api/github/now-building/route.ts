@@ -44,5 +44,3 @@ export async function GET() {
     return NextResponse.json({ error: "Failed to fetch repository data" }, { status: 500 });
   }
 }
-
-

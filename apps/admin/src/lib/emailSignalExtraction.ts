@@ -57,7 +57,16 @@ const START_DATE_KEYWORDS = ["start", "begin", "join", "onboard"];
  */
 function extractCompanyFromEmailAddress(email: string): string | null {
   // Skip generic email providers
-  const genericDomains = ["gmail", "yahoo", "outlook", "hotmail", "icloud", "aol", "mail", "protonmail"];
+  const genericDomains = [
+    "gmail",
+    "yahoo",
+    "outlook",
+    "hotmail",
+    "icloud",
+    "aol",
+    "mail",
+    "protonmail",
+  ];
 
   // Check for .jobs domain (e.g., amazon.jobs)
   const jobsDomainMatch = email.match(/@([^.]+)\.jobs\b/i);
@@ -323,8 +332,7 @@ export function extractEmailSignals(input: EmailSignalExtractionInput): EmailExt
   // Parse receivedAt if provided
   let receivedAt: Date | undefined;
   if (input.receivedAt) {
-    receivedAt =
-      input.receivedAt instanceof Date ? input.receivedAt : new Date(input.receivedAt);
+    receivedAt = input.receivedAt instanceof Date ? input.receivedAt : new Date(input.receivedAt);
     if (isNaN(receivedAt.getTime())) {
       receivedAt = undefined;
     }
@@ -356,4 +364,3 @@ export function extractEmailSignals(input: EmailSignalExtractionInput): EmailExt
     nextStepIndicators,
   };
 }
-

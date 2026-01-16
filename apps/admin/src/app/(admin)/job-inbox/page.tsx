@@ -162,8 +162,7 @@ function mapEmailToDisplay(email: EmailMessageFromApi): DisplayEmail {
     : "Not linked";
 
   // Use extracted signals company if available, otherwise fallback to email domain
-  const company =
-    email.extractedSignals?.company || extractCompanyFromEmail(email.from);
+  const company = email.extractedSignals?.company || extractCompanyFromEmail(email.from);
 
   return {
     id: email.id,

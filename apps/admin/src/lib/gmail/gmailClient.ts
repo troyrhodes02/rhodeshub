@@ -25,7 +25,7 @@ export async function getGmailAccessToken(): Promise<TokenResult> {
   // Check if current access token is still valid (with 5-minute buffer)
   const now = new Date();
   const bufferMs = 5 * 60 * 1000; // 5 minutes
-  
+
   if (
     credential.accessToken &&
     credential.accessTokenExpiresAt &&
@@ -98,4 +98,3 @@ export async function getGmailEmail(): Promise<string | null> {
   const credential = await prisma.gmailCredential.findFirst();
   return credential?.email ?? null;
 }
-

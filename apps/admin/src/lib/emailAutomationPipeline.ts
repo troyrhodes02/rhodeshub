@@ -15,11 +15,7 @@
 import { prisma } from "@/lib/prisma";
 import { classifyEmail } from "@/lib/emailClassification";
 import { extractEmailSignals, EmailExtractedSignals } from "@/lib/emailSignalExtraction";
-import {
-  EmailClassificationLabel,
-  JobApplicationStatus,
-  JobStatusSource,
-} from "@prisma/client";
+import { EmailClassificationLabel, JobApplicationStatus, JobStatusSource } from "@prisma/client";
 
 // Status rank for downgrade prevention
 // Higher number = more advanced in pipeline (except REJECTED = terminal)
@@ -31,9 +27,7 @@ const STATUS_RANK: Record<JobApplicationStatus, number> = {
 };
 
 // Email classification → Job status mapping
-const LABEL_TO_JOB_STATUS: Partial<
-  Record<EmailClassificationLabel, JobApplicationStatus>
-> = {
+const LABEL_TO_JOB_STATUS: Partial<Record<EmailClassificationLabel, JobApplicationStatus>> = {
   INTERVIEW: JobApplicationStatus.INTERVIEW,
   REJECTION: JobApplicationStatus.REJECTED,
   OFFER: JobApplicationStatus.OFFER,
@@ -67,9 +61,7 @@ export interface AnalyzeEmailResult {
  * 4. If email is linked to a job, evaluate status update rules
  * 5. If status change is valid, update JobApplication and create audit log
  */
-export async function analyzeEmailAndApplyAutomation(
-  emailId: string
-): Promise<AnalyzeEmailResult> {
+export async function analyzeEmailAndApplyAutomation(emailId: string): Promise<AnalyzeEmailResult> {
   // 1. Fetch the email
   const email = await prisma.emailMessage.findUnique({
     where: { id: emailId },
@@ -204,4 +196,3 @@ export async function analyzeEmailAndApplyAutomation(
 
   return result;
 }
-

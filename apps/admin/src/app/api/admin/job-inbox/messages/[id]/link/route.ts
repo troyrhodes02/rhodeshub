@@ -65,5 +65,3 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Failed to link email to job" }, { status: 500 });
   }
 }
-
-

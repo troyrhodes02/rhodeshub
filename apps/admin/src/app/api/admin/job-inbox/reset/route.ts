@@ -3,10 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * POST /api/admin/job-inbox/reset
- * 
+ *
  * Admin-only endpoint to delete E2E/test data from the Job Inbox.
  * Requires x-cron-secret header matching CRON_SECRET env var (in addition to Basic Auth).
- * 
+ *
  * Deletes:
  * - EmailMessage rows where externalId starts with "e2e-"
  * - EmailMessage rows where from/to contains "example.com" or test patterns
@@ -25,10 +25,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (providedSecret !== cronSecret) {
-    return NextResponse.json(
-      { error: "Invalid or missing x-cron-secret header" },
-      { status: 403 }
-    );
+    return NextResponse.json({ error: "Invalid or missing x-cron-secret header" }, { status: 403 });
   }
 
   try {
@@ -87,10 +84,6 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("Reset failed:", err);
     const errorMsg = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json(
-      { error: `Reset failed: ${errorMsg}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Reset failed: ${errorMsg}` }, { status: 500 });
   }
 }
-
