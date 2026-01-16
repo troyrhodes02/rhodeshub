@@ -10,7 +10,7 @@ const experiences: Experience[] = [
     company: "FreightFi",
     title: "Independent Contributor",
     location: "Remote",
-    startDate: "October 2025",
+    startDate: "November 2025",
     endDate: "Present",
     description:
       "FreightFi is a freight finance and audit automation platform designed to help carriers, brokers, and logistics teams detect payment discrepancies, validate shipping documents, and automate vendor payout calculations in real time. The system ingests rate confirmations, invoices, and Bills of Lading (BOLs), compares expected versus actual charges, flags variances, and provides an auditable breakdown of how every dollar was calculated — reducing manual reconciliation, short-pay risk, and operational delays.",
