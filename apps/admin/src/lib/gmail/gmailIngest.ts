@@ -48,7 +48,10 @@ interface SyncResult {
 /**
  * Get header value from Gmail message headers.
  */
-function getHeader(headers: Array<{ name: string; value: string }> | undefined, name: string): string {
+function getHeader(
+  headers: Array<{ name: string; value: string }> | undefined,
+  name: string
+): string {
   if (!headers) return "";
   const header = headers.find((h) => h.name.toLowerCase() === name.toLowerCase());
   return header?.value ?? "";
@@ -146,7 +149,7 @@ function generatePreview(body: string): string {
 
 /**
  * Sync Gmail inbox to database.
- * 
+ *
  * Strategy:
  * 1. On first run (no lastHistoryId), fetch last 30 days of inbox messages
  * 2. On subsequent runs, use historyId for incremental sync
@@ -343,10 +346,7 @@ interface ProcessResult {
 /**
  * Process a single Gmail message: fetch, normalize, upsert, run automation.
  */
-async function processGmailMessage(
-  accessToken: string,
-  messageId: string
-): Promise<ProcessResult> {
+async function processGmailMessage(accessToken: string, messageId: string): Promise<ProcessResult> {
   // Fetch full message
   const response = await fetch(`${GMAIL_API_BASE}/messages/${messageId}?format=full`, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -431,4 +431,3 @@ async function processGmailMessage(
 
   return { isNew: true, classified, matched, statusUpdated };
 }
-

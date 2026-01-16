@@ -520,9 +520,7 @@ export default function JobApplicationDetailPage({ params }: { params: Promise<{
                   )}
                   <Typography variant="caption" color="text.secondary">
                     {job.statusSource === "MANUAL" ? "Manual override" : "Set by automation"}
-                    {job.statusOverriddenAt && (
-                      <> on {formatDateTime(job.statusOverriddenAt)}</>
-                    )}
+                    {job.statusOverriddenAt && <> on {formatDateTime(job.statusOverriddenAt)}</>}
                   </Typography>
                 </Box>
               </Box>

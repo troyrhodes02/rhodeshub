@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * GET /api/admin/job-inbox/gmail/oauth/callback
- * 
+ *
  * Handles Google OAuth callback after user consent.
  * Exchanges authorization code for tokens and stores refresh_token.
  */
@@ -13,17 +13,11 @@ export async function GET(req: NextRequest) {
   const error = searchParams.get("error");
 
   if (error) {
-    return NextResponse.json(
-      { error: `OAuth error: ${error}` },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: `OAuth error: ${error}` }, { status: 400 });
   }
 
   if (!code) {
-    return NextResponse.json(
-      { error: "Missing authorization code" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Missing authorization code" }, { status: 400 });
   }
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -68,7 +62,8 @@ export async function GET(req: NextRequest) {
     if (!tokens.refresh_token) {
       return NextResponse.json(
         {
-          error: "No refresh_token received. This usually happens when the app was previously authorized. Please revoke access at https://myaccount.google.com/permissions and try again with prompt=consent.",
+          error:
+            "No refresh_token received. This usually happens when the app was previously authorized. Please revoke access at https://myaccount.google.com/permissions and try again with prompt=consent.",
         },
         { status: 400 }
       );
@@ -115,10 +110,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     console.error("Gmail OAuth callback error:", err);
-    return NextResponse.json(
-      { error: "Failed to process OAuth callback" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to process OAuth callback" }, { status: 500 });
   }
 }
-

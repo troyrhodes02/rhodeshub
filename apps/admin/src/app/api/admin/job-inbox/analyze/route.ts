@@ -86,25 +86,25 @@ export async function POST() {
     // Filter linked emails to those that need status update
     const emailsNeedingSync = linkedClassifiedEmails.filter((email) => {
       if (!email.jobApplication) return false;
-      
+
       const expectedStatus = LABEL_TO_JOB_STATUS[email.classificationLabel];
       if (!expectedStatus) return false;
 
       const job = email.jobApplication;
-      
+
       // Skip if manually overridden
       if (job.statusSource === "MANUAL" && job.statusOverriddenAt) return false;
-      
+
       // Skip if already at expected status or higher (no downgrades)
       const currentRank = STATUS_RANK[job.status];
       const expectedRank = STATUS_RANK[expectedStatus];
-      
+
       // Need sync if expected rank is higher than current
       // (or if expected is REJECTED which can override)
       if (expectedStatus === JobApplicationStatus.REJECTED) {
         return job.status !== JobApplicationStatus.REJECTED;
       }
-      
+
       return expectedRank > currentRank;
     });
 
@@ -150,10 +150,6 @@ export async function POST() {
     return NextResponse.json(response, { status: 200 });
   } catch (err) {
     console.error("Email backlog analysis failed:", err);
-    return NextResponse.json(
-      { error: "Failed to analyze email backlog" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to analyze email backlog" }, { status: 500 });
   }
 }
-

@@ -4,7 +4,7 @@ import { isGmailConnected, getGmailEmail } from "@/lib/gmail/gmailClient";
 
 /**
  * POST /api/admin/job-inbox/gmail/sync
- * 
+ *
  * Triggers Gmail inbox sync.
  * Fetches new emails from Gmail and persists them to the database.
  */
@@ -32,16 +32,13 @@ export async function POST() {
   } catch (err) {
     console.error("Gmail sync error:", err);
     const errorMsg = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json(
-      { error: `Gmail sync failed: ${errorMsg}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: `Gmail sync failed: ${errorMsg}` }, { status: 500 });
   }
 }
 
 /**
  * GET /api/admin/job-inbox/gmail/sync
- * 
+ *
  * Returns Gmail connection status.
  */
 export async function GET() {
@@ -56,10 +53,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error("Gmail status check error:", err);
-    return NextResponse.json(
-      { error: "Failed to check Gmail connection status" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to check Gmail connection status" }, { status: 500 });
   }
 }
-

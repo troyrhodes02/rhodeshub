@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 /**
  * GET /api/admin/job-inbox/gmail/oauth/start
- * 
+ *
  * Initiates Google OAuth flow for Gmail read-only access.
  * Redirects user to Google OAuth consent screen.
  */
@@ -11,10 +11,7 @@ export async function GET() {
   const redirectUri = process.env.GOOGLE_GMAIL_REDIRECT_URI;
 
   if (!clientId) {
-    return NextResponse.json(
-      { error: "GOOGLE_CLIENT_ID is not configured" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "GOOGLE_CLIENT_ID is not configured" }, { status: 500 });
   }
 
   if (!redirectUri) {
@@ -43,4 +40,3 @@ export async function GET() {
 
   return NextResponse.redirect(authUrl);
 }
-
